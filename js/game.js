@@ -7,18 +7,20 @@ let leftArrow = false;
 // Ball object here
 let oldX , mouseFlag = 0;
 let slider = {
-    width:canvas.width/3,
-    height:0,
-    x:(canvas.width/3),
-    y:canvas.height*0.94,
-    dx:3
-}
+
+  width: canvas.width / 3,
+  height: canvas.width/39,
+  x: canvas.width / 3,
+  y: canvas.height * 0.92,
+  dx: 3,
+};
 let ball = {
-
-}
-
-
-slider.height=slider.width/15;
+    r: (slider.height/2),
+    x: (canvas.width/2),
+    y: (slider.y)-(slider.height/2),
+    dx: 3,
+    dy: 3,
+};
 /////////////////////////////////////////////////////////////
 // Event Listener
 
@@ -149,11 +151,11 @@ function drawBricks() {
   }
   
 function updateScreen (){
+    // sliderWallCollision();
     moveSlider();
-    ballSliderCollision();
-    // ballWallCollision();
-    // moveBall(); // move up down left right stright
-}
+    // ballSliderCollision();
+    ballWallCollision();
+    moveBall(); // move up down left right stright
 
 function moveSlider () {
     if(rightArrow && slider.x < canvas.width-slider.width-5){
@@ -164,7 +166,6 @@ function moveSlider () {
     }
     
 }
-
 
 function ballSliderCollision(){
     if(ball.y+ball.r >= slider.y && ball.x >= slider.x && ball.x <= (slider.x+slider.width) ){
@@ -198,5 +199,24 @@ function calSeta(){
     return ratio;
 }
 
+function moveBall() {
+    ball.x += ball.dx;
+    ball.y -= ball.dy;
+}
 
-
+function ballWallCollision() {
+    if(ball.y == (canvas.length-ball.width))
+    {
+            ball.x = (canvas.width-slider.height)/2;
+            ball.y = (canvas.height*0.92)-slider.height;
+            ball.dx = 3;
+            ball.dy = -3;
+    }else{
+        if(ball.x == ball.r || ball.x == (canvas.width-ball.r)) {
+            ball.dx = ball.dx * -1;
+        }
+        if(ball.y == ball.r) {
+            ball.dy = ball.dy * -1;
+        }
+    }
+}
