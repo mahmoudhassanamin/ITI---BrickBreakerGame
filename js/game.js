@@ -8,16 +8,19 @@ let leftArrow = false;
 
 let slider = {
     width:canvas.width/3,
-    height:0,
+    height:canvas.width/39,
     x:(canvas.width/3),
     y:canvas.height*0.92,
     dx:3
 }
 let ball = {
-
+    width: slider.height,
+    x:(canvas.width-slider.height)/2,
+    y: (canvas.height*0.92)-slider.height,
+    dx:3,
+    dy:-3,
 }
 
-slider.height=slider.width/13;
 /////////////////////////////////////////////////////////////
 // Event Listener
 
@@ -95,8 +98,8 @@ function updateScreen (){
     // sliderWallCollision();
     moveSlider();
     // ballSliderCollision();
-    // ballWallCollision();
-    // moveBall(); // move up down left right stright
+    ballWallCollision();
+    moveBall(); // move up down left right stright
 }
 
 function moveSlider () {
@@ -108,7 +111,56 @@ function moveSlider () {
     }
 }
 
+// function moveBall() {
+//     if(ball.y == (canvas.length-ball.width))
+//     {
+//             ball.x = (canvas.width-slider.height)/2;
+//             ball.y = (canvas.height*0.92)-slider.height;
+//             ball.dx = 3;
+//             ball.dy = -3;
+//     }else{
+//         switch (ball.x) {
+//             case 0:
+//                 ball.dx = 3
+//                 break;
+//             case (canvas.width-ball.width):
+//                 ball.dx = -3;
+//                 break;
+//         }
+//         if(ball.y == 0) {
+//             ball.dy = 3;
+//         }
+//         ball.x += ball.dx;
+//         ball.y += ball.dy;
+//     }
+// }
 
+function moveBall() {
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+}
+
+function ballWallCollision() {
+    if(ball.y == (canvas.length-ball.width))
+    {
+            ball.x = (canvas.width-slider.height)/2;
+            ball.y = (canvas.height*0.92)-slider.height;
+            ball.dx = 3;
+            ball.dy = -3;
+    }else{
+        switch (ball.x) {
+            case 0:
+                ball.dx = 3
+                break;
+            case (canvas.width-ball.width):
+                ball.dx = -3;
+                break;
+        }
+        if(ball.y == 0) {
+            ball.dy = 3;
+        }
+    }
+}
 
 
 
