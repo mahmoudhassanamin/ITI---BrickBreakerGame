@@ -14,11 +14,11 @@ let slider = {
   dx: 3,
 };
 let ball = {
-    width: slider.height,
-    x: (canvas.width-slider.height)/2,
-    y: (canvas.height*0.92)-slider.height,
+    r: (slider.height/2),
+    x: (canvas.width/2),
+    y: (slider.y)-(slider.height/2),
     dx: 3,
-    dy: -3,
+    dy: 3,
 };
 
 /////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ function moveSlider() {
 
 function moveBall() {
     ball.x += ball.dx;
-    ball.y += ball.dy;
+    ball.y -= ball.dy;
 }
 
 function ballWallCollision() {
@@ -145,16 +145,11 @@ function ballWallCollision() {
             ball.dx = 3;
             ball.dy = -3;
     }else{
-        switch (ball.x) {
-            case 0:
-                ball.dx = 3
-                break;
-            case (canvas.width-ball.width):
-                ball.dx = -3;
-                break;
+        if(ball.x == ball.r || ball.x == (canvas.width-ball.r)) {
+            ball.dx = ball.dx * -1;
         }
-        if(ball.y == 0) {
-            ball.dy = 3;
+        if(ball.y == ball.r) {
+            ball.dy = ball.dy * -1;
         }
     }
 }
