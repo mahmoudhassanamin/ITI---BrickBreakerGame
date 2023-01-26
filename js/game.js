@@ -77,13 +77,13 @@ function drawBall() {}
 function drawBricks() {
   //bricks object
   let bricks = {
-    x: 20,
-    xOriginal: 20,
-    y: 10,
-    width: 20,
-    height: 10,
-    dY: 15,
-    dX: 20,
+    x: canvas.width / 15,
+    xOriginal: canvas.width / 15,
+    y: canvas.height / 10,
+    width: canvas.width / 15,
+    height: canvas.height / 15,
+    dY: canvas.height / 10,
+    dX: canvas.width / 15,
   };
   //choosing colors
   let availableBricksColors = ["green", "blue", "red", "orange"];
