@@ -21,7 +21,7 @@ let ball = {
   x: canvas.width / 2,
   y: slider.y - slider.height / 2,
   dx: 3,
-  dy: 3,
+  dy: 1,
 };
 //bricks
 let brick = {};
@@ -174,7 +174,7 @@ function ballSliderCollision() {
     ball.x >= slider.x &&
     ball.x <= slider.x + slider.width
   ) {
-    ball.dx = 3;
+    ball.dx = 1;
     ball.dy = 3;
     let ratio = calSeta();
     if (ratio >= 0 && ratio < 0.2) {
@@ -201,22 +201,26 @@ function calSeta() {
 }
 
 function moveBall() {
+  console.log(ball.x);
+  console.log(ball.y);
   ball.x += ball.dx;
   ball.y -= ball.dy;
 }
 
 function ballWallCollision() {
-  if (ball.y == canvas.length - ball.width) {
-    ball.x = (canvas.width - slider.height) / 2;
-    ball.y = canvas.height * 0.92 - slider.height;
+  console.log(ball.x);
+  console.log(ball.y);
+  if (ball.y >= canvas.height - ball.width) {
+    ball.x = canvas.width / 2;
+    ball.y = slider.y - slider.height / 2;
     ball.dx = 3;
-    ball.dy = -3;
+    ball.dy = 1;
   } else {
-    if (ball.x == ball.r || ball.x == canvas.width - ball.r) {
-      ball.dx = ball.dx * -1;
+    if (ball.x <= ball.r || ball.x >= canvas.width - ball.r) {
+      ball.dx = (ball.dx * -1);
     }
-    if (ball.y == ball.r) {
-      ball.dy = ball.dy * -1;
+    if (ball.y <= ball.r) {
+      ball.dy = (ball.dy * -1);
     }
   }
 }
