@@ -4,7 +4,6 @@ const canvas = document.getElementById("cvs");
 const ctx = canvas.getContext("2d");
 let rightArrow = false;
 let leftArrow = false;
-let availableBricksColors = ["green", "blue", "red", "orange"];
 const bricks = [];
 // Ball object here
 let oldX,
@@ -25,7 +24,20 @@ let ball = {
 };
 //bricks
 let brick = {};
+let availableBricksColors = ["green", "blue", "red", "orange"];
+//making twoDimensionsArrayOfBricksObjects
 let twoDimensionsArrayOfBricksObjects = [];
+for (var index = 0; index < 4; index++) {
+  twoDimensionsArrayOfBricksObjects[index] = [];
+  for (var bc = 0; bc < 11; bc++) {
+    twoDimensionsArrayOfBricksObjects[index][bc] = {
+      x: null,
+      y: null,
+      status: 0,
+    };
+  }
+}
+
 /////////////////////////////////////////////////////////////
 // Event Listener
 
@@ -121,7 +133,7 @@ function drawBricks() {
   };
   //closuring so we can access it later
   brick = bricks;
-  //choosing colors
+  //choosing colors for bricks
   availableBricksColors.forEach((color, index) => {
     //every time the x is const and y is variable in the big loop
     bricks.y = bricks.y + bricks.dY;
@@ -129,25 +141,52 @@ function drawBricks() {
     bricks.x = bricks.xOriginal;
     ctx.fillStyle = color;
     //holding bricks in a twoDimensionsArrayOfBricksObjects
-    twoDimensionsArrayOfBricksObjects[index] = [];
     //drawing a 11 bricks for each of every 4 lines
     for (let bc = 0; bc < 11; bc++) {
-      //every time the y is const and x is variable in the small loop
-      ctx.beginPath();
-      //adding a width of bricks
-      bricks.x = bricks.x + bricks.dX;
-      ctx.rect(bricks.x, bricks.y, bricks.width, bricks.height);
-      ctx.fillStyle = color;
-      ctx.fill();
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "black";
-      ctx.stroke();
-      ctx.closePath();
-      //holding bricks in a twoDimensionsArrayOfBricksObjects
-      twoDimensionsArrayOfBricksObjects[index][bc] = {
-        x: bricks.x,
-        y: bricks.y,
-      };
+      // 0 means it was not hit by the ball
+      // 1 means it was hit by the ball 1 time
+      // 2 means it was hit by the ball 2 times
+      //add a check if the brick status is 0 then draw it normally
+      if (twoDimensionsArrayOfBricksObjects[index][bc].status == 0) {
+        //every time the y is const and x is variable in the small loop
+        ctx.beginPath();
+        //adding a width of bricks
+        bricks.x = bricks.x + bricks.dX;
+        ctx.rect(bricks.x, bricks.y, bricks.width, bricks.height);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "black";
+        //make it appear as not cracked
+        ctx.setLineDash([0]);
+        ctx.stroke();
+        ctx.closePath();
+        //holding bricks in a twoDimensionsArrayOfBricksObjects
+        twoDimensionsArrayOfBricksObjects[index][bc] = {
+          x: bricks.x,
+          y: bricks.y,
+          status: 0,
+        };
+      }
+      // 0 means it was not hit by the ball
+      // 1 means it was hit by the ball 1 time
+      // 2 means it was hit by the ball 2 times
+      //add a check if the brick status is 1 then draw it with a crack
+      if (twoDimensionsArrayOfBricksObjects[index][bc].status == 1) {
+        //every time the y is const and x is variable in the small loop
+        ctx.beginPath();
+        //adding a width of bricks
+        bricks.x = bricks.x + bricks.dX;
+        ctx.rect(bricks.x, bricks.y, bricks.width, bricks.height);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "black";
+        //make it appear as cracked
+        ctx.setLineDash([6]);
+        ctx.stroke();
+        ctx.closePath();
+      }
     }
   });
 }
@@ -156,7 +195,7 @@ function updateScreen() {
   moveSlider();
   ballSliderCollision();
   ballWallCollision();
-  //ballBricksCollision();
+  ballBricksCollision();
   moveBall(); // move up down left right straight
 }
 function moveSlider() {
@@ -201,15 +240,15 @@ function calSeta() {
 }
 
 function moveBall() {
-  console.log(ball.x);
-  console.log(ball.y);
+  // console.log(ball.x);
+  // console.log(ball.y);
   ball.x += ball.dx;
   ball.y -= ball.dy;
 }
 
 function ballWallCollision() {
-  console.log(ball.x);
-  console.log(ball.y);
+  // console.log(ball.x);
+  // console.log(ball.y);
   if (ball.y >= canvas.height - ball.width) {
     ball.x = canvas.width / 2;
     ball.y = slider.y - slider.height / 2;
@@ -217,19 +256,50 @@ function ballWallCollision() {
     ball.dy = 1;
   } else {
     if (ball.x <= ball.r || ball.x >= canvas.width - ball.r) {
-      ball.dx = (ball.dx * -1);
+      ball.dx = ball.dx * -1;
     }
     if (ball.y <= ball.r) {
-      ball.dy = (ball.dy * -1);
+      ball.dy = ball.dy * -1;
     }
   }
 }
 function ballBricksCollision() {
   // loop through all the bricks and compare every single brick's position with the ball's coordinates
-  availableBricksColors.forEach((index) => {
+
+  for (let index = 0; index < 4; index++) {
     for (let bc = 0; bc < 11; bc++) {
       const b = twoDimensionsArrayOfBricksObjects[index][bc];
       // collision detection logic here
+      // For the center of the ball to be inside the brick, all the following need to be true:
+      // The x position of the ball is greater than the x position of the brick.
+      // The x position of the ball is less than the x position of the brick plus its width.
+      // The y position of the ball is greater than the y position of the brick.
+      // The y position of the ball is less than the y position of the brick plus its height.
+      if (
+        ball.x > b.x &&
+        ball.x < b.x + brick.width &&
+        ball.y > b.y &&
+        ball.y < b.y + brick.height &&
+        b.status == 0
+      ) {
+        //bounce the ball back
+        ball.dy = ball.dy * -1;
+        //mark the brick as 1 time hit, so next time it will be drawn cracked
+        b.status = 1;
+      }
+      //if it hit twice
+      else if (
+        ball.x > b.x &&
+        ball.x < b.x + brick.width &&
+        ball.y > b.y &&
+        ball.y < b.y + brick.height &&
+        b.status == 1
+      ) {
+        //bounce the ball back
+        ball.dy = ball.dy * -1;
+        //mark the brick as 2 time hit, so next time it will not be drawn
+        b.status = 2;
+      }
     }
-  });
+  }
 }
