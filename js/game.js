@@ -5,6 +5,7 @@ const ctx = canvas.getContext("2d");
 let rightArrow = false;
 let leftArrow = false;
 const bricks = [];
+const constant=2;
 // Ball object here
 let oldX,
   mouseFlag = 0;
@@ -16,11 +17,11 @@ let slider = {
   dx: 3,
 };
 let ball = {
-  r: slider.height / 2,
+  r: slider.height/2,
   x: canvas.width / 2,
-  y: slider.y - slider.height / 2,
-  dx: 3,
-  dy: 1,
+  y: slider.y-slider.height/2,
+  dx: -2,
+  dy: -2
 };
 //bricks
 let brick = {};
@@ -111,13 +112,21 @@ function drawGame() {
 
 function drawSlider() {
   ctx.beginPath();
-  ctx.fillStyle = "rgb(74, 16, 49)";
+  ctx.fillStyle = "rgb(230, 230, 218)";
   ctx.fillRect(slider.x, slider.y, slider.width, slider.height);
+  ctx.lineWidth="1";
+  ctx.strokeStyle="";
+  ctx.rect(slider.x, slider.y, slider.width, slider.height);
+  ctx.stroke();
 }
 
 function drawBall() {
   ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
+  ctx.lineWidth="1";
+  ctx.strokeStyle="black"
+  ctx.fillStyle="rgb(74, 16, 49)";
+  ctx.arc(ball.x, ball.y, ball.r,0,2*Math.PI);
+  ctx.fill();
   ctx.stroke();
 }
 
@@ -208,42 +217,21 @@ function moveSlider() {
 }
 
 function ballSliderCollision() {
-  if (
-    ball.y + ball.r >= slider.y &&
-    ball.x >= slider.x &&
-    ball.x <= slider.x + slider.width
-  ) {
-    ball.dx = 1;
-    ball.dy = 3;
-    let ratio = calSeta();
-    if (ratio >= 0 && ratio < 0.2) {
-      ball.dy = -ball.dy / 3;
-      ball.dx = -ball.dx;
-    } else if (ratio >= 0.2 && ratio < 0.4) {
-      ball.dx = -ball.dx / 1.5;
-      ball.dy = -ball.dy / 2;
-    } else if (ratio >= 0.4 && ratio < 0.6) {
-      ball.dx = 0;
-      ball.dy = -3;
-    } else if (ratio >= 0.6 && ratio < 0.8) {
-      ball.dx = ball.dx / 1.5;
-      ball.dy = -ball.dy;
-    } else if (ratio >= 0.8 && ratio <= 1) {
-      ball.dy = -ball.dy / 3;
-    }
+  if (ball.y+ball.r >= slider.y && ball.x >= slider.x && ball.x <= slider.x + slider.width) {
+    let seta = calSeta();
+    ball.dx=constant*Math.sin(seta);
+    ball.dy=-constant*Math.cos(seta);
   }
 }
 
 function calSeta() {
-  let ratio = ((slider.x - ball.x) / slider.width) * 100;
+  let ratio = (( ball.x - (slider.x+slider.width/2))/(slider.width/2))*1.047
   return ratio;
 }
 
 function moveBall() {
-  // console.log(ball.x);
-  // console.log(ball.y);
   ball.x += ball.dx;
-  ball.y -= ball.dy;
+  ball.y += ball.dy;
 }
 
 function ballWallCollision() {
