@@ -49,38 +49,34 @@ for (var index = 0; index < 4; index++) {
 /////////////////////////////////////////////////////////////
 // Event Listener
 
-//playButton.addEventListener("click", handler1);
+playButton.addEventListener("click",startShow);
 
 ////////////////////////////////////////////////////////////////
 // Functions
 
 //StartShowFunction
 
-const myTimeout3 = () => {
-  setTimeout(myGreeting3, 1000);
+function startShow () {
+  playButton.removeEventListener("click",startShow);
+  setTimeout(ready,2000)
 };
+const myTimeout2 = ()=> {setTimeout(steady, 2000)};
+const myTimeout1 = ()=> {setTimeout(go, 2000)};
 
-playButton.addEventListener("click", myTimeout3);
-
-function myGreeting3() {
+function ready() {
   startShowDiv.textContent = "Ready!";
-  const myTimeout2 = () => {
-    setTimeout(myGreeting2, 1000);
-  };
   myTimeout2();
 }
 
-function myGreeting2() {
+function steady() {
   startShowDiv.textContent = "Steady!";
-  const myTimeout1 = () => {
-    setTimeout(myGreeting1, 1000);
-  };
   myTimeout1();
 }
 
-function myGreeting1() {
-  startShowDiv.textContent = "Go!";
+function go() {
+  startShowDiv.innerHTML = "Go!";
   handler1();
+
 }
 
 //StartShowFunction
@@ -131,8 +127,6 @@ function handler4(event) {
     mouseFlag = 1;
   }
 }
-
-function startShow() {}
 
 function gameLoop() {
   drawGame();

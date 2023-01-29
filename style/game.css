@@ -37,32 +37,26 @@ button:hover {
   background-color: rgba(248, 240, 240, 0.594);
   color: rgb(38, 37, 37);
 }
-#startshow {
-  top: 20vw;
-  left: 38vw;
-  direction: ltr;
-  position: absolute;
-  font-size: 4vw;
-  color: black;
-  animation-name: Three;
-  animation-duration: 5s;
+#startshow{
+    top: 20vw;
+    left:38vw;
+    direction: ltr;
+    position:absolute;
+    font-size: 4vw;
+    color: black;
+    animation-name: Three;
+    animation-duration:5s;
+
 }
 @keyframes Three {
-  50% {
-    transform: scale(3);
-  }
-  75% {
-    transform: scale(1.5);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-#win {
-  position: absolute;
-  top: 3vw;
-  left: 25vw;
-  width: 35vw;
-  height: 40vw;
-  display: none;
+50%{
+    transform:scale(3);
+    }    
+75%{
+    transform:scale(1.5);
+    }
+100%{
+    transform:scale(1);
+    }
+    
 }
