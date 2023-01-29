@@ -1,64 +1,68 @@
-body{
-    background-image: url(../resources/images/body.jpg);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 100% 100%;
+body {
+  background-image: url(../resources/images/body.jpg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100%;
 }
-#cvs{
-    position: absolute;
-    top: 3vw;
-    left: 25vw;
-    width:35vw;
-    height: 40vw;
-    border: 2px solid rgb(255, 0, 204);
-    border-radius: 1vw;
-    background-image: url(../resources/images/gameBG.webp);
-    background-repeat: no-repeat;
-    background-size: cover;
+#cvs {
+  position: absolute;
+  top: 3vw;
+  left: 25vw;
+  width: 35vw;
+  height: 40vw;
+  border: 2px solid rgb(255, 0, 204);
+  border-radius: 1vw;
+  background-image: url(../resources/images/gameBG.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-button{
-    position:absolute;
-    top: 10vw;
-    left:70vw;
-    font-size: 2vw;
-    padding: 1vw 4vw;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif ;
-    background-color: rgba(0, 0, 0, 0.594);
-    color: white;
-    border:2px solid white;
-    border-radius: 1vw;
-    font-weight:bolder ;
+button {
+  position: absolute;
+  top: 10vw;
+  left: 70vw;
+  font-size: 2vw;
+  padding: 1vw 4vw;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  background-color: rgba(0, 0, 0, 0.594);
+  color: white;
+  border: 2px solid white;
+  border-radius: 1vw;
+  font-weight: bolder;
 }
-#stop{
-    top: 16vw;
+#stop {
+  top: 16vw;
 }
-button:hover{
-    cursor: pointer;
-    background-color: rgba(248, 240, 240, 0.594);
-    color: rgb(38, 37, 37);
-    
+button:hover {
+  cursor: pointer;
+  background-color: rgba(248, 240, 240, 0.594);
+  color: rgb(38, 37, 37);
 }
-#startshow{
-    top: 20vw;
-    left:38vw;
-    direction: ltr;
-    position:absolute;
-    font-size: 4vw;
-    color: black;
-    animation-name: Three;
-    animation-duration:5s;
-
+#startshow {
+  top: 20vw;
+  left: 38vw;
+  direction: ltr;
+  position: absolute;
+  font-size: 4vw;
+  color: black;
+  animation-name: Three;
+  animation-duration: 5s;
 }
 @keyframes Three {
-50%{
-    transform:scale(3);
-    }    
-75%{
-    transform:scale(1.5);
-    }
-100%{
-    transform:scale(1);
-    }
-    
+  50% {
+    transform: scale(3);
+  }
+  75% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
-
+#win {
+  position: absolute;
+  top: 3vw;
+  left: 25vw;
+  width: 35vw;
+  height: 40vw;
+  display: none;
+}
