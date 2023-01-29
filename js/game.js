@@ -7,6 +7,8 @@ let leftArrow = false;
 const bricks = [];
 const constant = 2;
 const startShowDiv = document.getElementById("startshow");
+//score counter
+let counter = 0;
 
 // Ball object here
 let oldX,
@@ -19,7 +21,7 @@ let slider = {
   dx: 3,
 };
 let ball = {
-  r: slider.height / 2,
+  r: slider.height / 1.5,
   x: canvas.width / 2,
   y: slider.y - slider.height / 2,
   dx: -2,
@@ -52,39 +54,39 @@ for (var index = 0; index < 4; index++) {
 ////////////////////////////////////////////////////////////////
 // Functions
 
-
 //StartShowFunction
 
-const myTimeout3 = ()=> {setTimeout(myGreeting3,1000)};
+const myTimeout3 = () => {
+  setTimeout(myGreeting3, 1000);
+};
 
 playButton.addEventListener("click", myTimeout3);
 
 function myGreeting3() {
   startShowDiv.textContent = "Ready!";
-  const myTimeout2 = ()=> {setTimeout(myGreeting2, 1000)};
-  myTimeout2();  
+  const myTimeout2 = () => {
+    setTimeout(myGreeting2, 1000);
+  };
+  myTimeout2();
 }
 
 function myGreeting2() {
   startShowDiv.textContent = "Steady!";
-  const myTimeout1 = ()=> {setTimeout(myGreeting1, 1000)};
+  const myTimeout1 = () => {
+    setTimeout(myGreeting1, 1000);
+  };
   myTimeout1();
 }
 
 function myGreeting1() {
-  
   startShowDiv.textContent = "Go!";
   handler1();
 }
 
-//StartShowFunction 
-
-
-
+//StartShowFunction
 
 function handler1() {
-
-  startShowDiv.style.display = 'none';
+  startShowDiv.style.display = "none";
 
   addEventListener("keydown", handler2);
   addEventListener("keyup", handler3);
@@ -161,11 +163,11 @@ function drawSlider() {
 
 function drawBall() {
   ctx.beginPath();
-  ctx.lineWidth = "1";
+  ctx.lineWidth = "2";
   ctx.strokeStyle = "black";
-  ctx.fillStyle = "rgb(74, 16, 49)";
+  // ctx.fillStyle = "rgb(74, 16, 49)";
   ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
-  ctx.fill();
+  // ctx.fill();
   ctx.stroke();
 }
 
@@ -247,11 +249,18 @@ function drawBricks() {
 }
 
 function updateScreen() {
+  showCounter();
   moveSlider();
   ballSliderCollision();
   ballWallCollision();
   ballBricksCollision();
   moveBall(); // move up down left right straight
+}
+function showCounter() {
+  ctx.font = "12px Comic Sans MS";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText(`Score: ${counter}`, canvas.width / 12, canvas.height / 12);
 }
 function moveSlider() {
   if (rightArrow && slider.x < canvas.width - slider.width - 5) {
@@ -333,6 +342,8 @@ function ballBricksCollision() {
         ball.dy = ball.dy * -1;
         //mark the brick as 1 time hit, so next time it will be drawn cracked
         b.status = 1;
+        //add to score
+        counter++;
       }
       //if it hit twice
       else if (
@@ -346,6 +357,8 @@ function ballBricksCollision() {
         ball.dy = ball.dy * -1;
         //mark the brick as 2 time hit, so next time it will not be drawn
         b.status = 2;
+        //add to score
+        counter++;
       }
     }
   }
