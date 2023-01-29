@@ -141,6 +141,17 @@ function gameLoop() {
     leftArrow = false;
     rightArrow = false;
   }
+  if (counter == 88) {
+    //get out of the gameLoop
+    cancelAnimationFrame(gameLoop);
+    // alert(`YOU WIN, YOUR SCORE IS ${counter}`);
+    //show image
+    document.getElementById("win").style.display = "block";
+    setTimeout(() => {
+      document.location.reload();
+      clearInterval(interval);
+    }, 5000);
+  }
   requestAnimationFrame(gameLoop);
 }
 
@@ -158,6 +169,8 @@ function drawSlider() {
   ctx.lineWidth = "1";
   ctx.strokeStyle = "";
   ctx.rect(slider.x, slider.y, slider.width, slider.height);
+  //make it appear as not cracked
+  ctx.setLineDash([0]);
   ctx.stroke();
 }
 
@@ -168,6 +181,8 @@ function drawBall() {
   // ctx.fillStyle = "rgb(74, 16, 49)";
   ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
   // ctx.fill();
+  //make it appear as not cracked
+  ctx.setLineDash([0]);
   ctx.stroke();
 }
 
@@ -251,10 +266,10 @@ function drawBricks() {
 function updateScreen() {
   showCounter();
   moveSlider();
+  moveBall();
   ballSliderCollision();
   ballWallCollision();
   ballBricksCollision();
-  moveBall(); // move up down left right straight
 }
 function showCounter() {
   ctx.font = "12px Comic Sans MS";
@@ -359,6 +374,7 @@ function ballBricksCollision() {
         b.status = 2;
         //add to score
         counter++;
+        //endgame
       }
     }
   }
