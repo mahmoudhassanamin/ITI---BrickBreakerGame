@@ -46,18 +46,20 @@ button:hover{
     font-size: 4vw;
     color: black;
     animation-name: Three;
-    animation-duration:5s;
-
+    animation-duration:2s;
+    animation-timing-function: steps(1000);
+    animation-iteration-count: infinite;
+    /* animation-direction: reverse; */
 }
 @keyframes Three {
 50%{
-    transform:scale(3);
-    }    
-75%{
-    transform:scale(1.5);
+    transform:scale(0.3);
+    }
+60%{
+    transform:scale(0.6);
     }
 100%{
-    transform:scale(1);
+    transform:scale(0.9);
     }
     
 }
