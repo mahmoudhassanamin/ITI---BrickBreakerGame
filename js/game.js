@@ -7,6 +7,8 @@ let leftArrow = false;
 const bricks = [];
 const constant = 2;
 const startShowDiv = document.getElementById("startshow");
+//score counter
+let counter = 0;
 
 // Ball object here
 let oldX,
@@ -19,7 +21,7 @@ let slider = {
   dx: 3,
 };
 let ball = {
-  r: slider.height / 2,
+  r: slider.height / 1.5,
   x: canvas.width / 2,
   y: slider.y - slider.height / 2,
   dx: -2,
@@ -52,7 +54,6 @@ playButton.addEventListener("click",startShow);
 ////////////////////////////////////////////////////////////////
 // Functions
 
-
 //StartShowFunction
 
 function startShow () {
@@ -78,14 +79,10 @@ function go() {
 
 }
 
-//StartShowFunction 
-
-
-
+//StartShowFunction
 
 function handler1() {
-
-  startShowDiv.style.display = 'none';
+  startShowDiv.style.display = "none";
 
   addEventListener("keydown", handler2);
   addEventListener("keyup", handler3);
@@ -138,6 +135,17 @@ function gameLoop() {
     leftArrow = false;
     rightArrow = false;
   }
+  if (counter == 88) {
+    //get out of the gameLoop
+    cancelAnimationFrame(gameLoop);
+    // alert(`YOU WIN, YOUR SCORE IS ${counter}`);
+    //show image
+    document.getElementById("win").style.display = "block";
+    setTimeout(() => {
+      document.location.reload();
+      clearInterval(interval);
+    }, 5000);
+  }
   requestAnimationFrame(gameLoop);
 }
 
@@ -155,16 +163,20 @@ function drawSlider() {
   ctx.lineWidth = "1";
   ctx.strokeStyle = "";
   ctx.rect(slider.x, slider.y, slider.width, slider.height);
+  //make it appear as not cracked
+  ctx.setLineDash([0]);
   ctx.stroke();
 }
 
 function drawBall() {
   ctx.beginPath();
-  ctx.lineWidth = "1";
+  ctx.lineWidth = "2";
   ctx.strokeStyle = "black";
-  ctx.fillStyle = "rgb(74, 16, 49)";
+  // ctx.fillStyle = "rgb(74, 16, 49)";
   ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
-  ctx.fill();
+  // ctx.fill();
+  //make it appear as not cracked
+  ctx.setLineDash([0]);
   ctx.stroke();
 }
 
@@ -246,11 +258,18 @@ function drawBricks() {
 }
 
 function updateScreen() {
+  showCounter();
   moveSlider();
+  moveBall();
   ballSliderCollision();
   ballWallCollision();
   ballBricksCollision();
-  moveBall(); // move up down left right straight
+}
+function showCounter() {
+  ctx.font = "12px Comic Sans MS";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText(`Score: ${counter}`, canvas.width / 12, canvas.height / 12);
 }
 function moveSlider() {
   if (rightArrow && slider.x < canvas.width - slider.width - 5) {
@@ -332,6 +351,8 @@ function ballBricksCollision() {
         ball.dy = ball.dy * -1;
         //mark the brick as 1 time hit, so next time it will be drawn cracked
         b.status = 1;
+        //add to score
+        counter++;
       }
       //if it hit twice
       else if (
@@ -345,6 +366,9 @@ function ballBricksCollision() {
         ball.dy = ball.dy * -1;
         //mark the brick as 2 time hit, so next time it will not be drawn
         b.status = 2;
+        //add to score
+        counter++;
+        //endgame
       }
     }
   }
