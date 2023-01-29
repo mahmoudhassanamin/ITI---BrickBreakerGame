@@ -205,7 +205,6 @@ function drawBricks() {
     //restoring x position of the line to it's original position after each loop
     bricks.x = bricks.xOriginal;
     ctx.fillStyle = color;
-    //holding bricks in a twoDimensionsArrayOfBricksObjects
     //drawing a 11 bricks for each of every 4 lines
     for (let bc = 0; bc < 11; bc++) {
       // 0 means it was not hit by the ball
