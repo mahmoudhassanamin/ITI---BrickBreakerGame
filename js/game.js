@@ -6,6 +6,8 @@ let rightArrow = false;
 let leftArrow = false;
 const bricks = [];
 const constant = 2;
+const startShowDiv = document.getElementById("startshow");
+
 // Ball object here
 let oldX,
   mouseFlag = 0;
@@ -45,11 +47,45 @@ for (var index = 0; index < 4; index++) {
 /////////////////////////////////////////////////////////////
 // Event Listener
 
-playButton.addEventListener("click", handler1);
+//playButton.addEventListener("click", handler1);
 
 ////////////////////////////////////////////////////////////////
 // Functions
+
+
+//StartShowFunction
+
+const myTimeout3 = ()=> {setTimeout(myGreeting3,1000)};
+
+playButton.addEventListener("click", myTimeout3);
+
+function myGreeting3() {
+  startShowDiv.textContent = "Ready!";
+  const myTimeout2 = ()=> {setTimeout(myGreeting2, 1000)};
+  myTimeout2();  
+}
+
+function myGreeting2() {
+  startShowDiv.textContent = "Steady!";
+  const myTimeout1 = ()=> {setTimeout(myGreeting1, 1000)};
+  myTimeout1();
+}
+
+function myGreeting1() {
+  
+  startShowDiv.textContent = "Go!";
+  handler1();
+}
+
+//StartShowFunction 
+
+
+
+
 function handler1() {
+
+  startShowDiv.style.display = 'none';
+
   addEventListener("keydown", handler2);
   addEventListener("keyup", handler3);
   //   addEventListener("mousemove", handler4);
