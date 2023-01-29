@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 let rightArrow = false;
 let leftArrow = false;
 const bricks = [];
-const constant=2;
+const constant = 2;
 // Ball object here
 let oldX,
   mouseFlag = 0;
@@ -17,13 +17,13 @@ let slider = {
   dx: 3,
 };
 let ball = {
-  r: slider.height/2,
+  r: slider.height / 2,
   x: canvas.width / 2,
-  y: slider.y-slider.height/2,
+  y: slider.y - slider.height / 2,
   dx: -2,
   dy: -2,
   originaldx: -2,
-  originaldy: -2
+  originaldy: -2,
 };
 let ballMoveinit = false;
 //bricks
@@ -117,18 +117,18 @@ function drawSlider() {
   ctx.beginPath();
   ctx.fillStyle = "rgb(230, 230, 218)";
   ctx.fillRect(slider.x, slider.y, slider.width, slider.height);
-  ctx.lineWidth="1";
-  ctx.strokeStyle="";
+  ctx.lineWidth = "1";
+  ctx.strokeStyle = "";
   ctx.rect(slider.x, slider.y, slider.width, slider.height);
   ctx.stroke();
 }
 
 function drawBall() {
   ctx.beginPath();
-  ctx.lineWidth="1";
-  ctx.strokeStyle="black"
-  ctx.fillStyle="rgb(74, 16, 49)";
-  ctx.arc(ball.x, ball.y, ball.r,0,2*Math.PI);
+  ctx.lineWidth = "1";
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "rgb(74, 16, 49)";
+  ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
   ctx.fill();
   ctx.stroke();
 }
@@ -195,8 +195,15 @@ function drawBricks() {
         ctx.lineWidth = 1;
         ctx.strokeStyle = "black";
         //make it appear as cracked
-        ctx.setLineDash([6]);
+        ctx.setLineDash([7]);
         ctx.stroke();
+        ctx.closePath();
+      }
+      if (twoDimensionsArrayOfBricksObjects[index][bc].status == 2) {
+        //every time the y is const and x is variable in the small loop
+        ctx.beginPath();
+        //adding a width of bricks
+        bricks.x = bricks.x + bricks.dX;
         ctx.closePath();
       }
     }
@@ -220,37 +227,41 @@ function moveSlider() {
 }
 
 function ballSliderCollision() {
-  if (ball.y+ball.r >= slider.y && ball.x >= slider.x && ball.x <= slider.x + slider.width) {
+  if (
+    ball.y + ball.r >= slider.y &&
+    ball.x >= slider.x &&
+    ball.x <= slider.x + slider.width
+  ) {
     let seta = calSeta();
-    ball.dx=constant*Math.sin(seta);
-    ball.dy=-constant*Math.cos(seta);
+    ball.dx = constant * Math.sin(seta);
+    ball.dy = -constant * Math.cos(seta);
   }
 }
 
 function calSeta() {
-  let ratio = (( ball.x - (slider.x+slider.width/2))/(slider.width/2))*1.047
+  let ratio =
+    ((ball.x - (slider.x + slider.width / 2)) / (slider.width / 2)) * 1.047;
   return ratio;
 }
 
 function moveBall() {
-  if(!ballMoveinit){
-    if(rightArrow){
+  if (!ballMoveinit) {
+    if (rightArrow) {
       ballMoveinit = true;
-    }else if(leftArrow){
+    } else if (leftArrow) {
       ballMoveinit = true;
-      ball.dx = (ball.dx * -1);
+      ball.dx = ball.dx * -1;
     }
-  }else{
+  } else {
     ball.x += ball.dx;
     ball.y += ball.dy;
-  } 
+  }
 }
 
 function ballWallCollision() {
-  
-  if (ball.y >= (canvas.height - ball.r)) {
+  if (ball.y >= canvas.height - ball.r) {
     ballMoveinit = false;
-    ball.x = slider.x+(slider.width/2);
+    ball.x = slider.x + slider.width / 2;
     ball.y = slider.y - slider.height / 2;
     ball.dx = ball.originaldx;
     ball.dy = ball.originaldy;
