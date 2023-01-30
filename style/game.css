@@ -77,7 +77,7 @@ p{
   padding: 0vw 4vw;
 }
 
-#win {
+#end {
   position: absolute;
   top: 11vw;
   left: 33vw;
@@ -88,18 +88,20 @@ p{
 #Lives {
   position: absolute;
   top: 25vw;
-  left: 81vw;
+  left: 80vw;
   font-size: 300%;
   color: white;
   font-weight: bolder;
   display: block;
+  padding: 0;
 }
 #Score {
   position: absolute;
   top: 20vw;
-  left: 81vw;
+  left: 80vw;
   font-size: 300%;
   color: white;
   font-weight: bolder;
   display: block;
+  padding: 0;
 }
