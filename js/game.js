@@ -1,9 +1,14 @@
 // variables && Objects
 const playButton = document.getElementById("play");
 const canvas = document.getElementById("cvs");
+const aud = document.getElementById("aud");
 const stopbtn = document.getElementById("stop");
 
 const ctx = canvas.getContext("2d");
+const endPic = document.getElementById("end");
+
+const viewScore = document.getElementById("Score");
+const viewLives = document.getElementById("Lives");
 
 let img=[document.getElementById("bre"),document.getElementById("bre2"),document.getElementById("bre3"),document.getElementById("bre4")]
 
@@ -29,9 +34,9 @@ let counter = 0;
 // Ball object here
 let oldX,mouseFlag = 0;
 let slider = {
-  width: 945 , //200
+  width: 200,
   height: 30,
-  x: 0, // 372.5
+  x: 372.5, 
   y: canvas.height * 0.94,
   dx: 10,
 };
@@ -59,29 +64,44 @@ for(let index = 0; index < 4; index++) {
   dY+=bricksClass.height+50;
   dX=((index+1)/2)*bricksClass.width;
 }
+
+let lives = 3;
+
 // var img1 = document.getElementById("bre");
 // var img2 = document.getElementById("bre2");
 
 /////////////////////////////////////////////////////////////
-// Event Listener
+// Event Listener + on page load action
 
 playButton.addEventListener("click", myTimeout3);
+addEventListener("load", musicStart);
 stopbtn.addEventListener("click", stopAction);
 
 ////////////////////////////////////////////////////////////////
 // Functions
+
+//start music
+
+function musicStart() {
+  aud.currentTime = 0;
+  aud.play();
+}
 
 //StartShowFunction
 
 function myTimeout3 () {
   playButton.removeEventListener("click", myTimeout3);
   startShowDiv.textContent = "Ready!";
+  aud.src="#"; //peep sound
+  musicStart();
   setTimeout(myGreeting3, 1000);
 };
 
 
 function myGreeting3() {
   startShowDiv.textContent = "Steady!";
+  aud.src="#"; //peep sound
+  musicStart();
   const myTimeout2 = () => {
     setTimeout(myGreeting2, 1000);
   };
@@ -90,6 +110,8 @@ function myGreeting3() {
 
 function myGreeting2() {
   startShowDiv.textContent = "Go!";
+  aud.src="#"; //start tone
+  musicStart();
   const myTimeout1 = () => {
     setTimeout(myGreeting1, 1000);
   };
@@ -166,23 +188,37 @@ function stopAction(){
 }
 
 function gameLoop() {
-  drawGame();
-  updateScreen();
+  if(lives == 0) {
+    console.log("game lost");
+    endPic.src = "./resources/images/Game-Over-PNG-Free-Download.png";
+    gameEnd();
+    return;
+  }
+
+  if (counter == 52) {
+    //get out of the gameLoop
+    console.log("game won");
+    endPic.src = "./resources/images/download-removebg-preview.png";
+    gameEnd();
+    return;
+  }
   if (mouseFlag == 1) {
     leftArrow = false;
     rightArrow = false;
   }
-  if (counter == 52) {
-    //get out of the gameLoop
-    cancelAnimationFrame(gameLoop);
-    // alert(`YOU WIN, YOUR SCORE IS ${counter}`);
-    //show image
-    document.getElementById("win").style.display = "block";
-    setTimeout(() => {
-      document.location.reload();
-    }, 5000);
-  }
+  updateScreen();
+  drawGame();
   requestAnimationFrame(gameLoop);
+}
+
+function gameEnd() {
+  endPic.style.display = "block";
+
+}
+
+function rematch() {
+  endPic.style.display = "none";
+
 }
 
 function drawGame() {
@@ -242,6 +278,7 @@ function drawBricks() {
 
 function updateScreen() {
   showCounter();
+  showLives();
   moveSlider();
   moveBall();
   ballSliderCollision();
@@ -249,10 +286,10 @@ function updateScreen() {
   ballBricksCollision();
 }
 function showCounter() {
-  ctx.font = "30px Comic Sans MS";
-  ctx.fillStyle = "red";
-  ctx.textAlign = "center";
-  ctx.fillText(`Score: ${counter}`, 60,50);
+  viewScore.textContent = `Score: ${counter}`;
+}
+function showLives() {
+  viewLives.textContent = `Lives: ${lives}`;
 }
 function moveSlider() {
   if (rightArrow && slider.x < canvas.width - slider.width - 5) {
@@ -272,6 +309,8 @@ function ballSliderCollision() {
     let seta = calSeta();
     ball.dx = constant * Math.sin(seta);
     ball.dy = -constant * Math.cos(seta);
+    aud.src="#"; //paddle hit tone
+    musicStart();
   }
 }
 
@@ -299,17 +338,24 @@ function moveBall() {
 
 function ballWallCollision() {
   if (ball.y >= canvas.height - ball.r) {
+    lives--;
     ballMoveinit = false;
     ball.x = slider.x + slider.width / 2;
     ball.y = (slider.y - ball.r)-1;
     ball.dx = ball.originaldx;
     ball.dy = ball.originaldy;
+    aud.src="#"; //lose live tone
+    musicStart();
   } else {
     if (ball.x - ball.r <= 0 || ball.x >= canvas.width - ball.r) {
       ball.dx = ball.dx * -1;
+      aud.src="#"; //wall hit tone
+      musicStart();
     }
     if (ball.y -ball.r <= 0) {
       ball.dy = ball.dy * -1;
+      aud.src="#"; //wall hit tone
+      musicStart();
     }
   }
 }
@@ -325,9 +371,13 @@ function ballBricksCollision() {
             counter++;
             if(ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height) {
               ball.dy *= -1;
+              aud.src="#"; //brick hit tone
+              musicStart();
             }
             if(ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width) {
               ball.dx *= -1;
+              aud.src="#"; //brick hit tone
+              musicStart();
             }
         }
       }
@@ -339,35 +389,16 @@ function ballBricksCollision() {
             counter++;
             if(ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height) {
               ball.dy *= -1;
+              aud.src="#"; //brick break tone
+              musicStart();
             }
             else if(ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width) {
               ball.dx *= -1;
+              aud.src="#"; //brick break tone
+              musicStart();
             }
         }
       }
     }
   }
 }
-// ball.dy = -ball.dy;
-// bricks[index][bc].status = 2;
-// counter++;
-// // let d=ball.x + ball.r;
-  // // let f=ball.x - ball.r;
-  // // let hg=bricks[index][bc].x + bricksClass.width;
-  // if (bricks[index][bc].status == 0) {
-  //   if( ball.x >=  bricks[index][bc].x &&
-  //     ball.x <= bricks[index][bc].x + bricksClass.width &&
-  //     ball.y <= bricks[index][bc].y+bricksClass.height&& ball.y>=bricks[index][bc].y){
-  //       if(ball.px > bricks[index][bc].x )
-  //     ball.dy = -ball.dy;
-  //     bricks[index][bc].status = 1;
-  //     counter++;}
-  // }
-  // else if ( bricks[index][bc].status == 1) {
-  //   if( ball.x >=  bricks[index][bc].x &&
-  //     ball.x <= bricks[index][bc].x + bricksClass.width &&
-  //     ball.y <= bricks[index][bc].y+bricksClass.height&& ball.y>=bricks[index][bc].y)
-  //   ball.dy = -ball.dy;
-  //   bricks[index][bc].status = 2;
-  //   counter++;
-  // }

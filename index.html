@@ -5,11 +5,16 @@
     <title>Break Bricks</title>
     <link rel="stylesheet" href="./style/game.css" />
   </head>
-  <body>
+  <body onload="musicStart()">
+    <div>
+      <audio src="#" id="aud" autoplay></audio>
+    </div>
     <canvas id="cvs" height="1080" width="945"></canvas>
     <div>
       <button id="play">Play</button>
       <button id="stop">Stop</button>
+      <p id="Lives"></p>
+      <p id="Score"></p>
     </div>
     <div id="startshow"></div>
     <div id="pause">   
@@ -18,7 +23,7 @@
     <img
       src="./resources/images/download-removebg-preview.png"
       alt=""
-      id="win"
+      id="end"
     />
     <img src="./resources/images/b1.png" alt="" id="bre" hidden>
     <img src="./resources/images/b2.png" alt="" id="bre2" hidden>

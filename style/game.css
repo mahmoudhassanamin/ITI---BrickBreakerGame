@@ -58,6 +58,7 @@ button:hover {
     transform: scale(1);
   }
 }
+
 #pause{
   background-color:black;
   opacity: 0.6;
@@ -76,11 +77,31 @@ p{
   padding: 0vw 4vw;
 }
 
-#win {
+#end {
   position: absolute;
   top: 11vw;
   left: 33vw;
   width: 20vw;
   height: 20vw;
   display: none;
+}
+#Lives {
+  position: absolute;
+  top: 25vw;
+  left: 80vw;
+  font-size: 300%;
+  color: white;
+  font-weight: bolder;
+  display: block;
+  padding: 0;
+}
+#Score {
+  position: absolute;
+  top: 20vw;
+  left: 80vw;
+  font-size: 300%;
+  color: white;
+  font-weight: bolder;
+  display: block;
+  padding: 0;
 }
