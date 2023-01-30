@@ -2,6 +2,8 @@
 const playButton = document.getElementById("play");
 const canvas = document.getElementById("cvs");
 const aud = document.getElementById("aud");
+const stopbtn = document.getElementById("stop");
+
 const ctx = canvas.getContext("2d");
 const endPic = document.getElementById("end");
 
@@ -9,6 +11,8 @@ const viewScore = document.getElementById("Score");
 const viewLives = document.getElementById("Lives");
 
 let img=[document.getElementById("bre"),document.getElementById("bre2"),document.getElementById("bre3"),document.getElementById("bre4")]
+
+let devpause = document.getElementById("pause");
 
 let rightArrow = false;
 let leftArrow = false;
@@ -71,6 +75,7 @@ let lives = 3;
 
 playButton.addEventListener("click", myTimeout3);
 addEventListener("load", musicStart);
+stopbtn.addEventListener("click", stopAction);
 
 ////////////////////////////////////////////////////////////////
 // Functions
@@ -164,7 +169,23 @@ function handler4(event) {
   }
 }
 
-function startShow() {}
+
+function stopAction(){
+  if(ballMoveinit) {
+    ballMoveinit=false;
+    devpause.style.display='block';
+    removeEventListener("keydown", handler2);
+    removeEventListener("keyup", handler3);
+    stopbtn.textContent="Continue";
+    }
+  else{
+    ballMoveinit=true;
+    devpause.style.display='none';
+    addEventListener("keydown", handler2);
+    addEventListener("keyup", handler3); 
+    stopbtn.textContent="Pause"; 
+  }
+}
 
 function gameLoop() {
   if(lives == 0) {

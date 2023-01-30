@@ -58,7 +58,26 @@ button:hover {
     transform: scale(1);
   }
 }
-#end {
+
+#pause{
+  background-color:black;
+  opacity: 0.6;
+  position: absolute;
+  top: 18vw;
+  left: 34vw;
+  width:17vw;
+  height: 10vw;
+  border-radius: 1vw;
+  display: none; 
+}
+p{
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif ;
+  font-size: 3vw;
+  color:white;
+  padding: 0vw 4vw;
+}
+
+#win {
   position: absolute;
   top: 11vw;
   left: 33vw;
