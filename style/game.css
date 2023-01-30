@@ -58,11 +58,29 @@ button:hover {
     transform: scale(1);
   }
 }
-#win {
+#end {
   position: absolute;
   top: 11vw;
   left: 33vw;
   width: 20vw;
   height: 20vw;
   display: none;
+}
+#Lives {
+  position: absolute;
+  top: 25vw;
+  left: 81vw;
+  font-size: 300%;
+  color: white;
+  font-weight: bolder;
+  display: block;
+}
+#Score {
+  position: absolute;
+  top: 20vw;
+  left: 81vw;
+  font-size: 300%;
+  color: white;
+  font-weight: bolder;
+  display: block;
 }
