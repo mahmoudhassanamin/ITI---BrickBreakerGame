@@ -1,94 +1,109 @@
 // variables && Objects
 const playButton = document.getElementById("play");
 const canvas = document.getElementById("cvs");
+
 const ctx = canvas.getContext("2d");
+
+let img=[document.getElementById("bre"),document.getElementById("bre2"),document.getElementById("bre3"),document.getElementById("bre4")]
+
 let rightArrow = false;
 let leftArrow = false;
-const bricks = [];
-const constant = 2;
+const constant = 15;
+let dX = 0 ,dY = 0;
 const startShowDiv = document.getElementById("startshow");
+class bricksClass{
+  static width = 100;
+  static height =50;
+  constructor(dx,dy){
+    this.x = 32+dx;
+    this.y = 80+dy;
+    this.status=0;
+  }
+}
 //score counter
 let counter = 0;
 
 // Ball object here
-let oldX,
-  mouseFlag = 0;
+let oldX,mouseFlag = 0;
 let slider = {
-  width: canvas.width / 3,
-  height: canvas.width / 39,
-  x: canvas.width / 3,
-  y: canvas.height * 0.92,
-  dx: 3,
+  width: 945 , //200
+  height: 30,
+  x: 0, // 372.5
+  y: canvas.height * 0.94,
+  dx: 10,
 };
-let ball = {
-  r: slider.height / 1.5,
+const ball = {
+  r: 10,
   x: canvas.width / 2,
-  y: slider.y - slider.height / 2,
-  dx: -2,
-  dy: -2,
-  originaldx: -2,
-  originaldy: -2,
+  y: slider.y - 16,
+  px: 0,
+  py: 0,
+  dx: 10,
+  dy: -10,
+  originaldx: 10,
+  originaldy: 10,
 };
+console.log(ball.dx," ",ball.dy )
 let ballMoveinit = false;
-//bricks
-let brick = {};
-let availableBricksColors = ["green", "blue", "red", "orange"];
-//making twoDimensionsArrayOfBricksObjects
-let twoDimensionsArrayOfBricksObjects = [];
-for (var index = 0; index < 4; index++) {
-  twoDimensionsArrayOfBricksObjects[index] = [];
-  for (var bc = 0; bc < 11; bc++) {
-    twoDimensionsArrayOfBricksObjects[index][bc] = {
-      x: null,
-      y: null,
-      status: 0,
-    };
+let bricks = [];
+let bricksColors = ["rgba(248, 240, 240, 0.594)","rgba(162, 0, 76, 0.606)"];
+for(let index = 0; index < 4; index++) {
+  bricks[index]=[];
+  for (let bc = 0; bc < 8-index; bc++) {
+    bricks[index][bc]=new bricksClass(dX,dY);
+    dX+=bricksClass.width+15;
   }
+  dY+=bricksClass.height+50;
+  dX=((index+1)/2)*bricksClass.width;
 }
+// var img1 = document.getElementById("bre");
+// var img2 = document.getElementById("bre2");
 
 /////////////////////////////////////////////////////////////
 // Event Listener
 
-playButton.addEventListener("click",startShow);
+playButton.addEventListener("click", myTimeout3);
 
 ////////////////////////////////////////////////////////////////
 // Functions
 
 //StartShowFunction
 
-function startShow () {
-  playButton.removeEventListener("click",startShow);
-  setTimeout(ready,2000)
-};
-const myTimeout2 = ()=> {setTimeout(steady, 2000)};
-const myTimeout1 = ()=> {setTimeout(go, 2000)};
-
-function ready() {
+function myTimeout3 () {
+  playButton.removeEventListener("click", myTimeout3);
   startShowDiv.textContent = "Ready!";
+  setTimeout(myGreeting3, 1000);
+};
+
+
+function myGreeting3() {
+  startShowDiv.textContent = "Steady!";
+  const myTimeout2 = () => {
+    setTimeout(myGreeting2, 1000);
+  };
   myTimeout2();
 }
 
-function steady() {
-  startShowDiv.textContent = "Steady!";
+function myGreeting2() {
+  startShowDiv.textContent = "Go!";
+  const myTimeout1 = () => {
+    setTimeout(myGreeting1, 1000);
+  };
   myTimeout1();
 }
 
-function go() {
-  startShowDiv.innerHTML = "Go!";
+function myGreeting1() {
+  startShowDiv.style.display = "none";
   handler1();
-
 }
 
 //StartShowFunction
 
 function handler1() {
-  startShowDiv.style.display = "none";
-
   addEventListener("keydown", handler2);
   addEventListener("keyup", handler3);
   //   addEventListener("mousemove", handler4);
-  // startShow();
-  setTimeout(gameLoop, 1000);
+  gameLoop();
 }
 
 function handler2(event) {
@@ -102,7 +117,7 @@ function handler2(event) {
 }
 
 function handler3(event) {
-  slider.dx = 3;
+  slider.dx = 10;
   if (event.keyCode == 37) {
     leftArrow = false;
   } else if (event.keyCode == 39) {
@@ -111,7 +126,7 @@ function handler3(event) {
 }
 
 function handler4(event) {
-  slider.dx = 4;
+  slider.dx = 20;
   if (mouseFlag == 1) {
     if (oldX > event.screenX) {
       leftArrow = true;
@@ -128,6 +143,8 @@ function handler4(event) {
   }
 }
 
+function startShow() {}
+
 function gameLoop() {
   drawGame();
   updateScreen();
@@ -135,7 +152,7 @@ function gameLoop() {
     leftArrow = false;
     rightArrow = false;
   }
-  if (counter == 88) {
+  if (counter == 52) {
     //get out of the gameLoop
     cancelAnimationFrame(gameLoop);
     // alert(`YOU WIN, YOUR SCORE IS ${counter}`);
@@ -143,7 +160,6 @@ function gameLoop() {
     document.getElementById("win").style.display = "block";
     setTimeout(() => {
       document.location.reload();
-      clearInterval(interval);
     }, 5000);
   }
   requestAnimationFrame(gameLoop);
@@ -173,7 +189,7 @@ function drawBall() {
   ctx.lineWidth = "2";
   ctx.strokeStyle = "black";
   // ctx.fillStyle = "rgb(74, 16, 49)";
-  ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
+  ctx.arc(ball.x,ball.y,ball.r,0,2 * Math.PI);
   // ctx.fill();
   //make it appear as not cracked
   ctx.setLineDash([0]);
@@ -181,79 +197,27 @@ function drawBall() {
 }
 
 function drawBricks() {
-  let bricks = {
-    x: canvas.width / 15,
-    xOriginal: canvas.width / 15,
-    y: canvas.height / 500,
-    width: canvas.width / 15,
-    height: canvas.height / 15,
-    dY: canvas.height / 10,
-    dX: canvas.width / 15,
-  };
-  //closuring so we can access it later
-  brick = bricks;
-  //choosing colors for bricks
-  availableBricksColors.forEach((color, index) => {
-    //every time the x is const and y is variable in the big loop
-    bricks.y = bricks.y + bricks.dY;
-    //restoring x position of the line to it's original position after each loop
-    bricks.x = bricks.xOriginal;
-    ctx.fillStyle = color;
-    //drawing a 11 bricks for each of every 4 lines
-    for (let bc = 0; bc < 11; bc++) {
-      // 0 means it was not hit by the ball
-      // 1 means it was hit by the ball 1 time
-      // 2 means it was hit by the ball 2 times
-      //add a check if the brick status is 0 then draw it normally
-      if (twoDimensionsArrayOfBricksObjects[index][bc].status == 0) {
-        //every time the y is const and x is variable in the small loop
-        ctx.beginPath();
-        //adding a width of bricks
-        bricks.x = bricks.x + bricks.dX;
-        ctx.rect(bricks.x, bricks.y, bricks.width, bricks.height);
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "black";
-        //make it appear as not cracked
-        ctx.setLineDash([0]);
-        ctx.stroke();
-        ctx.closePath();
-        //holding bricks in a twoDimensionsArrayOfBricksObjects
-        twoDimensionsArrayOfBricksObjects[index][bc] = {
-          x: bricks.x,
-          y: bricks.y,
-          status: 0,
-        };
+ 
+  for(let i =0 ; i<4 ; i++)
+  {
+    
+    for (let bc = 0; bc < 8-i; bc++) {
+      let check = (bc+i)%2 ?0:1;
+      let check2 = (bc+i)%2 ?2:3;
+      if (bricks[i][bc].status == 0) {
+        ctx.drawImage(img[check],bricks[i][bc].x,bricks[i][bc].y,bricksClass.width,bricksClass.height);
       }
-      // 0 means it was not hit by the ball
-      // 1 means it was hit by the ball 1 time
-      // 2 means it was hit by the ball 2 times
-      //add a check if the brick status is 1 then draw it with a crack
-      if (twoDimensionsArrayOfBricksObjects[index][bc].status == 1) {
-        //every time the y is const and x is variable in the small loop
-        ctx.beginPath();
-        //adding a width of bricks
-        bricks.x = bricks.x + bricks.dX;
-        ctx.rect(bricks.x, bricks.y, bricks.width, bricks.height);
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "black";
-        //make it appear as cracked
-        ctx.setLineDash([7]);
-        ctx.stroke();
-        ctx.closePath();
+      else if (bricks[i][bc].status == 1) {
+        ctx.drawImage(img[check2],bricks[i][bc].x,bricks[i][bc].y,bricksClass.width,bricksClass.height);
       }
-      if (twoDimensionsArrayOfBricksObjects[index][bc].status == 2) {
-        //every time the y is const and x is variable in the small loop
+      else if (bricks[i][bc].status == 2){
         ctx.beginPath();
-        //adding a width of bricks
-        bricks.x = bricks.x + bricks.dX;
-        ctx.closePath();
+        ctx.fillStyle="transparent";
+        ctx.fillRect(bricks[i][bc].x,bricks[i][bc].y,bricksClass.width,bricksClass.height)
       }
+      
     }
-  });
+  };
 }
 
 function updateScreen() {
@@ -265,10 +229,10 @@ function updateScreen() {
   ballBricksCollision();
 }
 function showCounter() {
-  ctx.font = "12px Comic Sans MS";
+  ctx.font = "30px Comic Sans MS";
   ctx.fillStyle = "red";
   ctx.textAlign = "center";
-  ctx.fillText(`Score: ${counter}`, canvas.width / 12, canvas.height / 12);
+  ctx.fillText(`Score: ${counter}`, 60,50);
 }
 function moveSlider() {
   if (rightArrow && slider.x < canvas.width - slider.width - 5) {
@@ -284,7 +248,7 @@ function ballSliderCollision() {
     ball.y + ball.r >= slider.y &&
     ball.x >= slider.x &&
     ball.x <= slider.x + slider.width
-  ) {
+  ){
     let seta = calSeta();
     ball.dx = constant * Math.sin(seta);
     ball.dy = -constant * Math.cos(seta);
@@ -306,6 +270,8 @@ function moveBall() {
       ball.dx = ball.dx * -1;
     }
   } else {
+    ball.px = ball.x;
+    ball.py = ball.y;
     ball.x += ball.dx;
     ball.y += ball.dy;
   }
@@ -315,60 +281,73 @@ function ballWallCollision() {
   if (ball.y >= canvas.height - ball.r) {
     ballMoveinit = false;
     ball.x = slider.x + slider.width / 2;
-    ball.y = slider.y - slider.height / 2;
+    ball.y = (slider.y - ball.r)-1;
     ball.dx = ball.originaldx;
     ball.dy = ball.originaldy;
   } else {
-    if (ball.x <= ball.r || ball.x >= canvas.width - ball.r) {
+    if (ball.x - ball.r <= 0 || ball.x >= canvas.width - ball.r) {
       ball.dx = ball.dx * -1;
     }
-    if (ball.y <= ball.r) {
+    if (ball.y -ball.r <= 0) {
       ball.dy = ball.dy * -1;
     }
   }
 }
 function ballBricksCollision() {
-  // loop through all the bricks and compare every single brick's position with the ball's coordinates
-
   for (let index = 0; index < 4; index++) {
-    for (let bc = 0; bc < 11; bc++) {
-      const b = twoDimensionsArrayOfBricksObjects[index][bc];
-      // collision detection logic here
-      // For the center of the ball to be inside the brick, all the following need to be true:
-      // The x position of the ball is greater than the x position of the brick.
-      // The x position of the ball is less than the x position of the brick plus its width.
-      // The y position of the ball is greater than the y position of the brick.
-      // The y position of the ball is less than the y position of the brick plus its height.
-      if (
-        ball.x > b.x &&
-        ball.x < b.x + brick.width &&
-        ball.y > b.y &&
-        ball.y < b.y + brick.height &&
-        b.status == 0
-      ) {
-        //bounce the ball back
-        ball.dy = ball.dy * -1;
-        //mark the brick as 1 time hit, so next time it will be drawn cracked
-        b.status = 1;
-        //add to score
-        counter++;
+    for (let bc = 0; bc < 8-index; bc++) {
+      
+    if ( bricks[index][bc].status == 0) {
+        if( ball.x+ball.r >= bricks[index][bc].x 
+          && ball.x - ball.r <= bricks[index][bc].x + bricksClass.width
+          && ball.y+ball.r >= bricks[index][bc].y && ball.y-ball.r <= bricks[index][bc].y + bricksClass.height ){
+            bricks[index][bc].status ++ ;
+            counter++;
+            if(ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height) {
+              ball.dy *= -1;
+            }
+            if(ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width) {
+              ball.dx *= -1;
+            }
+        }
       }
-      //if it hit twice
-      else if (
-        ball.x > b.x &&
-        ball.x < b.x + brick.width &&
-        ball.y > b.y &&
-        ball.y < b.y + brick.height &&
-        b.status == 1
-      ) {
-        //bounce the ball back
-        ball.dy = ball.dy * -1;
-        //mark the brick as 2 time hit, so next time it will not be drawn
-        b.status = 2;
-        //add to score
-        counter++;
-        //endgame
+      else if ( bricks[index][bc].status == 1) {
+        if( ball.x+ball.r >= bricks[index][bc].x 
+          && ball.x - ball.r <= bricks[index][bc].x + bricksClass.width
+          && ball.y+ball.r >= bricks[index][bc].y && ball.y-ball.r <= bricks[index][bc].y + bricksClass.height ){
+            bricks[index][bc].status ++ ;
+            counter++;
+            if(ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height) {
+              ball.dy *= -1;
+            }
+            else if(ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width) {
+              ball.dx *= -1;
+            }
+        }
       }
     }
   }
 }
+// ball.dy = -ball.dy;
+// bricks[index][bc].status = 2;
+// counter++;
+// // let d=ball.x + ball.r;
+  // // let f=ball.x - ball.r;
+  // // let hg=bricks[index][bc].x + bricksClass.width;
+  // if (bricks[index][bc].status == 0) {
+  //   if( ball.x >=  bricks[index][bc].x &&
+  //     ball.x <= bricks[index][bc].x + bricksClass.width &&
+  //     ball.y <= bricks[index][bc].y+bricksClass.height&& ball.y>=bricks[index][bc].y){
+  //       if(ball.px > bricks[index][bc].x )
+  //     ball.dy = -ball.dy;
+  //     bricks[index][bc].status = 1;
+  //     counter++;}
+  // }
+  // else if ( bricks[index][bc].status == 1) {
+  //   if( ball.x >=  bricks[index][bc].x &&
+  //     ball.x <= bricks[index][bc].x + bricksClass.width &&
+  //     ball.y <= bricks[index][bc].y+bricksClass.height&& ball.y>=bricks[index][bc].y)
+  //   ball.dy = -ball.dy;
+  //   bricks[index][bc].status = 2;
+  //   counter++;
+  // }
