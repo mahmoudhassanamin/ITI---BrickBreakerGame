@@ -7,30 +7,34 @@ body {
 #cvs {
   position: absolute;
   top: 3vw;
-  left: 15vw;
+  left: 7vw;
   width: 60vw;
   height: 40vw;
-  border: 2px solid rgb(255, 0, 204);
+  border: 2px solid rgb(250, 2, 200);
   border-radius: 1vw;
   background-image: url(../resources/images/gameBG.webp);
   background-repeat: no-repeat;
   background-size: cover;
+  box-shadow: 4px 0px 30px 5px rgb(255, 255, 255);
 }
 button {
   position: absolute;
-  top: 10vw;
-  left: 80vw;
+  top: 8vw;
+  left: 75vw;
   font-size: 2vw;
-  padding: 1vw 4vw;
+  /* padding: 1vw 4vw; */
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   background-color: rgba(0, 0, 0, 0.594);
   color: white;
-  border: 2px solid white;
+  border: 2px solid rgb(250, 2, 200);
   border-radius: 1vw;
   font-weight: bolder;
+  width: 15vw;
+  height: 3vw;
+  text-align: center;
 }
 #stop {
-  top: 16vw;
+  top: 14vw;
 }
 button:hover {
   cursor: pointer;
@@ -39,20 +43,23 @@ button:hover {
 }
 #startshow {
   top: 20vw;
-  left: 38vw;
+  left: 31vw;
+  text-align: center;
   direction: ltr;
   position: absolute;
   font-size: 4vw;
   color: black;
   animation-name: Three;
-  animation-duration: 5s;
+  animation-duration: 4.5s;
+  animation-timing-function: steps(200000000000);
+  animation-direction: reverse;
 }
 @keyframes Three {
-  50% {
+  40% {
     transform: scale(3);
   }
-  75% {
-    transform: scale(1.5);
+  60% {
+    transform: scale(2);
   }
   100% {
     transform: scale(1);
@@ -63,12 +70,15 @@ button:hover {
   background-color:black;
   opacity: 0.6;
   position: absolute;
-  top: 18vw;
-  left: 34vw;
-  width:17vw;
-  height: 10vw;
+  top: 3vw;
+  left: 7vw;
+  width: 60vw;
+  height: fit-content;
   border-radius: 1vw;
   display: none; 
+  text-align: center;
+  font-size: 5vw;
+  padding:11vw 0 13.4vw 2px;
 }
 p{
   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif ;
@@ -79,29 +89,55 @@ p{
 
 #end {
   position: absolute;
-  top: 11vw;
-  left: 33vw;
-  width: 20vw;
-  height: 20vw;
+  top: 9vw;
+  left: 23vw;
+  width: 30vw;
+  height: 30vw;
   display: none;
 }
 #Lives {
+  display:inline-block;
+  margin: 0;
   position: absolute;
-  top: 25vw;
-  left: 80vw;
-  font-size: 300%;
+  top: 1vw;
+  left: 6vw;
+  font-size: 200%;
   color: white;
   font-weight: bolder;
-  display: block;
   padding: 0;
 }
 #Score {
+  display: inline-block;
   position: absolute;
-  top: 20vw;
-  left: 80vw;
-  font-size: 300%;
+  top: 5.5vw;
+  left: 4vw;
+  font-size: 220%;
+  margin: 0;
   color: white;
   font-weight: bolder;
-  display: block;
   padding: 0;
+}
+.life{
+  display:inline-block;
+  position: absolute;
+  top:0.2vw;
+  left: 1.6vw;
+  width: 6vw;
+  height: 5vw;
+}
+.gameBox{
+  position:absolute;
+  top: 19vw;
+  left: 72vw;
+  width: 25vw;
+  height: 20vw;
+  display: none;
+}
+#soundimg{
+  display:inline-block;
+  position: absolute;
+  top:38vw;
+  left: 68vw;
+  width: 4vw;
+  height: 4vw;
 }

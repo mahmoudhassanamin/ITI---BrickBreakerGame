@@ -7,24 +7,30 @@
   </head>
   <body onload="musicStart()">
     <div>
-      <audio src="#" id="aud" autoplay></audio>
+      <audio src="#" id="aud"></audio>
     </div>
     <canvas id="cvs" height="1080" width="945"></canvas>
     <div>
-      <button id="play">Play</button>
-      <button id="stop">Stop</button>
-      <p id="Lives"></p>
-      <p id="Score"></p>
+      <button id="play">PLAY</button>
+      <button id="stop">PAUSE</button>
     </div>
     <div id="startshow"></div>
     <div id="pause">   
-      <p>PAUSE</p>    
+      <p style="font-size: 100%;">PAUSE</p>    
     </div>
     <img
-      src="./resources/images/download-removebg-preview.png"
+      src="./resources/images/winner1.png"
       alt=""
       id="end"
     />
+    <div class="gameBox" id="gameBox">
+      <img src="./resources/images/1697162351rotating-red-heart-gif-animation61.gif" alt="life" class="life">
+      <p id="Lives"></p>
+      <p id="Score"></p>
+    </div>
+    <img src="" alt="">
+    <img src="./resources/images/paddle.png" alt="" id="sliderBar" hidden>
+    <img src="./resources/images/sound.png" alt="" id="soundimg">
     <img src="./resources/images/b1.png" alt="" id="bre" hidden>
     <img src="./resources/images/b2.png" alt="" id="bre2" hidden>
     <img src="./resources/images/br1.jpg" alt="" id="bre3" hidden>

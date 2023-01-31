@@ -1,135 +1,156 @@
 // variables && Objects
 const playButton = document.getElementById("play");
 const canvas = document.getElementById("cvs");
-const aud = document.getElementById("aud");
 const stopbtn = document.getElementById("stop");
-
-const ctx = canvas.getContext("2d");
+let devpause = document.getElementById("pause");
+const aud = document.getElementById("aud");
+const soundimg = document.getElementById("soundimg");
 const endPic = document.getElementById("end");
-
 const viewScore = document.getElementById("Score");
 const viewLives = document.getElementById("Lives");
-
+const sliderBar = document.getElementById("sliderBar");
+const gameBox = document.getElementById("gameBox");
+const ctx = canvas.getContext("2d");
+let mute = 0;
+let lives = 3;
+let end = 0 ;
+let space=false;
 let img=[document.getElementById("bre"),document.getElementById("bre2"),document.getElementById("bre3"),document.getElementById("bre4")]
-
-let devpause = document.getElementById("pause");
-
+let soundEffect =[
+  1,
+  2,
+  3,
+  "./resources/sound/mixkit-tech-break-fail-2947.wav",
+  5,
+  "./resources/sound/mixkit-glass-break-with-hammer-thud-759.wav"
+]
 let rightArrow = false;
 let leftArrow = false;
-const constant = 15;
+const constant = 5;
 let dX = 0 ,dY = 0;
 const startShowDiv = document.getElementById("startshow");
-class bricksClass{
-  static width = 100;
-  static height =50;
-  constructor(dx,dy){
-    this.x = 32+dx;
-    this.y = 80+dy;
-    this.status=0;
-  }
-}
 //score counter
 let counter = 0;
 
 // Ball object here
 let oldX,mouseFlag = 0;
 let slider = {
-  width: 200,
-  height: 30,
-  x: 372.5, 
+  width: 220 , //200
+  height: 36,
+  x: 372.5, // 372.5
   y: canvas.height * 0.94,
-  dx: 10,
+  dx: 6
 };
-const ball = {
+let ball = {
   r: 10,
   x: canvas.width / 2,
   y: slider.y - 16,
-  px: 0,
-  py: 0,
-  dx: 10,
-  dy: -10,
-  originaldx: 10,
-  originaldy: 10,
+  dx: 4, //10
+  dy: -4,//-10
+  originaldx: 4,
+  originaldy: -4,
 };
-console.log(ball.dx," ",ball.dy )
 let ballMoveinit = false;
 let bricks = [];
 let bricksColors = ["rgba(248, 240, 240, 0.594)","rgba(162, 0, 76, 0.606)"];
-for(let index = 0; index < 4; index++) {
+
+
+/////////////////////////////////////////////////////////////
+// Event Listener
+soundimg.addEventListener("click",soundFun)
+addEventListener("load", musicStart);
+playButton.addEventListener("click", myTimeout3);
+////////////////////////////////////////////////////////////////
+// Functions
+
+class bricksClass{
+  static width = 97;
+  static height =49;
+  constructor(dx,dy){
+    this.x = 10+dx;
+    this.y = 80+dy;
+    this.status=0;
+  }
+}
+for(let index = 0; index < 5; index++) {
   bricks[index]=[];
   for (let bc = 0; bc < 8-index; bc++) {
     bricks[index][bc]=new bricksClass(dX,dY);
-    dX+=bricksClass.width+15;
+    dX+=bricksClass.width+21;
   }
   dY+=bricksClass.height+50;
   dX=((index+1)/2)*bricksClass.width;
 }
 
-let lives = 3;
-
-// var img1 = document.getElementById("bre");
-// var img2 = document.getElementById("bre2");
-
-/////////////////////////////////////////////////////////////
-// Event Listener + on page load action
-
-playButton.addEventListener("click", myTimeout3);
-addEventListener("load", musicStart);
-stopbtn.addEventListener("click", stopAction);
-
-////////////////////////////////////////////////////////////////
-// Functions
-
-//start music
-
-function musicStart() {
-  aud.currentTime = 0;
-  aud.play();
-}
-
-//StartShowFunction
-
 function myTimeout3 () {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   playButton.removeEventListener("click", myTimeout3);
-  startShowDiv.textContent = "Ready!";
+  startShowDiv.innerHTML = "READY!";
   aud.src="#"; //peep sound
-  musicStart();
-  setTimeout(myGreeting3, 1000);
+  musicStart(0);
+  setTimeout(myGreeting3,1500);
 };
 
 
 function myGreeting3() {
-  startShowDiv.textContent = "Steady!";
+  startShowDiv.innerHTML = "STEADY!";
   aud.src="#"; //peep sound
-  musicStart();
+  musicStart(0);
   const myTimeout2 = () => {
-    setTimeout(myGreeting2, 1000);
+    setTimeout(myGreeting2,1500);
   };
   myTimeout2();
 }
 
 function myGreeting2() {
-  startShowDiv.textContent = "Go!";
-  aud.src="#"; //start tone
-  musicStart();
+  startShowDiv.innerHTML = "GO...";
+  aud.src=`${soundEffect[2]}`; //start tone
+  musicStart(0.1);
   const myTimeout1 = () => {
-    setTimeout(myGreeting1, 1000);
+    setTimeout(myGreeting1,1500);
   };
   myTimeout1();
 }
 
 function myGreeting1() {
   startShowDiv.style.display = "none";
+  gameBox.style.display="block"
   handler1();
 }
+function soundFun (){
+  if (mute == 0){
+    mute = 1;
+    soundimg.src="./resources/images/mute.png"
+  }
+  else{
+    mute = 0;
+    soundimg.src="./resources/images/sound.png"
+  }
+}
+function musicStart(t) {
+  if(mute == 0){
+  aud.currentTime = t;
+  aud.play();
+  }
+}
 
-//StartShowFunction
+function handler0 (event){
+  
+  if(event.keyCode == 32 || event.type == "mousedown"){
+    removeEventListener("keydown", handler0);
+    removeEventListener("mousedown", handler0);
+    stopbtn.addEventListener("mousedown",stopAction); 
+    space=true;
+  }
+}
 
 function handler1() {
   addEventListener("keydown", handler2);
   addEventListener("keyup", handler3);
-  //   addEventListener("mousemove", handler4);
+  addEventListener("keydown", handler0);
+  canvas.addEventListener("mousemove", handler4);
   gameLoop();
+  
 }
 
 function handler2(event) {
@@ -152,24 +173,16 @@ function handler3(event) {
 }
 
 function handler4(event) {
-  slider.dx = 20;
-  if (mouseFlag == 1) {
-    if (oldX > event.screenX) {
-      leftArrow = true;
-      rightArrow = false;
-      oldX = event.screenX;
-    } else if (oldX < event.screenX) {
-      rightArrow = true;
-      leftArrow = false;
-      oldX = event.screenX;
+  mouseFlag = 1;
+  addEventListener("mousedown",handler0)
+  if(event.screenX+80 < canvas.width+80 && event.screenX-slider.width/2-45 > 50){
+    slider.x=event.screenX-slider.width/2-100;
+    if (!space){
+      ball.x = slider.x + slider.width / 2;
+      ball.y = slider.y - 16;
     }
-  } else {
-    oldX = event.screenX;
-    mouseFlag = 1;
   }
 }
-
-
 function stopAction(){
   if(ballMoveinit) {
     ballMoveinit=false;
@@ -177,48 +190,52 @@ function stopAction(){
     removeEventListener("keydown", handler2);
     removeEventListener("keyup", handler3);
     stopbtn.textContent="Continue";
+    space=false;
     }
   else{
     ballMoveinit=true;
     devpause.style.display='none';
     addEventListener("keydown", handler2);
     addEventListener("keyup", handler3); 
-    stopbtn.textContent="Pause"; 
+    stopbtn.textContent="Pause";
+    space=true;
   }
 }
 
 function gameLoop() {
+  drawGame();
+  updateScreen();
   if(lives == 0) {
-    console.log("game lost");
-    endPic.src = "./resources/images/Game-Over-PNG-Free-Download.png";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    removeEventListener("mousedown", handler0);
+    endPic.src = "./resources/images/Game-Over-PNG-Free-Download.webp";
     gameEnd();
     return;
   }
-
-  if (counter == 52) {
-    //get out of the gameLoop
-    console.log("game won");
-    endPic.src = "./resources/images/download-removebg-preview.png";
+  if (counter == 60) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    removeEventListener("mousedown", handler0);
+    endPic.src = "./resources/images/winner1.png";
     gameEnd();
     return;
   }
+  drawGame();
+  updateScreen();
   if (mouseFlag == 1) {
     leftArrow = false;
     rightArrow = false;
   }
-  updateScreen();
-  drawGame();
+
   requestAnimationFrame(gameLoop);
+
 }
 
 function gameEnd() {
   endPic.style.display = "block";
-
 }
 
 function rematch() {
   endPic.style.display = "none";
-
 }
 
 function drawGame() {
@@ -229,34 +246,22 @@ function drawGame() {
 }
 
 function drawSlider() {
-  ctx.beginPath();
-  ctx.fillStyle = "rgb(230, 230, 218)";
-  ctx.fillRect(slider.x, slider.y, slider.width, slider.height);
-  ctx.lineWidth = "1";
-  ctx.strokeStyle = "";
-  ctx.rect(slider.x, slider.y, slider.width, slider.height);
-  //make it appear as not cracked
-  ctx.setLineDash([0]);
-  ctx.stroke();
+  ctx.drawImage(sliderBar,slider.x,slider.y,slider.width,slider.height);
 }
 
 function drawBall() {
   ctx.beginPath();
   ctx.lineWidth = "2";
   ctx.strokeStyle = "black";
-  // ctx.fillStyle = "rgb(74, 16, 49)";
+  ctx.fillStyle = "rgb(74, 16, 49)";
   ctx.arc(ball.x,ball.y,ball.r,0,2 * Math.PI);
-  // ctx.fill();
-  //make it appear as not cracked
-  ctx.setLineDash([0]);
+  ctx.fill();
   ctx.stroke();
 }
 
 function drawBricks() {
  
-  for(let i =0 ; i<4 ; i++)
-  {
-    
+  for(let i =0 ; i<5 ; i++){
     for (let bc = 0; bc < 8-i; bc++) {
       let check = (bc+i)%2 ?0:1;
       let check2 = (bc+i)%2 ?2:3;
@@ -286,17 +291,25 @@ function updateScreen() {
   ballBricksCollision();
 }
 function showCounter() {
-  viewScore.textContent = `Score: ${counter}`;
+  viewScore.textContent = `Score : ${counter}`;
 }
 function showLives() {
-  viewLives.textContent = `Lives: ${lives}`;
+  viewLives.textContent = `Lives  : ${lives}`;
 }
 function moveSlider() {
-  if (rightArrow && slider.x < canvas.width - slider.width - 5) {
+  if (rightArrow && slider.x < canvas.width - slider.width -12) {
     slider.x += slider.dx;
+    if (!space){
+      ball.x = slider.x + slider.width / 2;
+      ball.y = slider.y - 16;
+    }
   }
-  if (leftArrow && slider.x > 5) {
+  if (leftArrow && slider.x > 10) {
     slider.x -= slider.dx;
+    if (!space){
+      ball.x = slider.x + slider.width / 2;
+      ball.y = slider.y - 16;
+    }
   }
 }
 
@@ -306,29 +319,25 @@ function ballSliderCollision() {
     ball.x >= slider.x &&
     ball.x <= slider.x + slider.width
   ){
+    aud.src=`${soundEffect[4]}`; //paddle hit tone
+    musicStart(0);
     let seta = calSeta();
     ball.dx = constant * Math.sin(seta);
     ball.dy = -constant * Math.cos(seta);
-    aud.src="#"; //paddle hit tone
-    musicStart();
   }
 }
 
 function calSeta() {
-  let ratio =
-    ((ball.x - (slider.x + slider.width / 2)) / (slider.width / 2)) * 1.047;
+  let ratio = ((ball.x - (slider.x + slider.width / 2)) / (slider.width / 2)) * 1.1;
   return ratio;
 }
 
 function moveBall() {
   if (!ballMoveinit) {
-    if (rightArrow) {
+    if (space) {
       ballMoveinit = true;
-    } else if (leftArrow) {
-      ballMoveinit = true;
-      ball.dx = ball.dx * -1;
-    }
-  } else {
+    } 
+  }else {
     ball.px = ball.x;
     ball.py = ball.y;
     ball.x += ball.dx;
@@ -341,64 +350,81 @@ function ballWallCollision() {
     lives--;
     ballMoveinit = false;
     ball.x = slider.x + slider.width / 2;
-    ball.y = (slider.y - ball.r)-1;
+    ball.y = slider.y - 16;
     ball.dx = ball.originaldx;
     ball.dy = ball.originaldy;
-    aud.src="#"; //lose live tone
-    musicStart();
+    addEventListener("keydown", handler0);
+    stopbtn.removeEventListener("mousedown",stopAction); 
+    space=false;
+    aud.src=`${soundEffect[4]}`; //lose live tone
+    musicStart(0.3);
   } else {
     if (ball.x - ball.r <= 0 || ball.x >= canvas.width - ball.r) {
       ball.dx = ball.dx * -1;
-      aud.src="#"; //wall hit tone
-      musicStart();
+      aud.src=`${soundEffect[3]}`; //wall hit tone
+      musicStart(0.3);
     }
     if (ball.y -ball.r <= 0) {
       ball.dy = ball.dy * -1;
-      aud.src="#"; //wall hit tone
-      musicStart();
+      aud.src=`${soundEffect[3]}`; //wall hit tone
+      musicStart(0.3);
     }
   }
 }
 function ballBricksCollision() {
-  for (let index = 0; index < 4; index++) {
+  for (let index = 0; index < 5; index++) {
+    let flag =0;
     for (let bc = 0; bc < 8-index; bc++) {
-      
-    if ( bricks[index][bc].status == 0) {
-        if( ball.x+ball.r >= bricks[index][bc].x 
+        if( bricks[index][bc].status == 0 && ball.x+ball.r >= bricks[index][bc].x 
           && ball.x - ball.r <= bricks[index][bc].x + bricksClass.width
-          && ball.y+ball.r >= bricks[index][bc].y && ball.y-ball.r <= bricks[index][bc].y + bricksClass.height ){
-            bricks[index][bc].status ++ ;
+          && (ball.y+ball.r >= bricks[index][bc].y &&
+          ball.y-ball.r <= bricks[index][bc].y + bricksClass.height )){
+            aud.src=`${soundEffect[5]}`; //brick hit tone
+            musicStart(0.5);
+          
+          if((ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height)&& ball.x>bricks[index][bc].x&&ball.x<bricks[index][bc].x+bricksClass.width){
+            ball.dy *= -1;
+            bricks[index][bc].status = 1;
             counter++;
-            if(ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height) {
-              ball.dy *= -1;
-              aud.src="#"; //brick hit tone
-              musicStart();
-            }
-            if(ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width) {
-              ball.dx *= -1;
-              aud.src="#"; //brick hit tone
-              musicStart();
-            }
+          }
+          
+          else if((ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width)&&ball.y>bricks[index][bc].y&&ball.y<bricks[index][bc].y+bricksClass.height) {
+            ball.dx *= -1;
+            bricks[index][bc].status = 1;
+            counter++;
+          }
+          else {
+            ball.dy *= -1;
+            bricks[index][bc].status = 1;
+            counter++;
+          }
+          flag=1;
         }
-      }
-      else if ( bricks[index][bc].status == 1) {
-        if( ball.x+ball.r >= bricks[index][bc].x 
+        else if(flag!=1 && bricks[index][bc].status == 1 && ball.x+ball.r >= bricks[index][bc].x 
           && ball.x - ball.r <= bricks[index][bc].x + bricksClass.width
-          && ball.y+ball.r >= bricks[index][bc].y && ball.y-ball.r <= bricks[index][bc].y + bricksClass.height ){
-            bricks[index][bc].status ++ ;
+          && (ball.y+ball.r >= bricks[index][bc].y &&
+            ball.y-ball.r <= bricks[index][bc].y + bricksClass.height )){
+            aud.src=`${soundEffect[5]}`; //brick break tone
+            musicStart(0.5);
+         
+          if((ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height)&& ball.x>bricks[index][bc].x&&ball.x<bricks[index][bc].x+bricksClass.width) {
+            ball.dy *= -1;
+            bricks[index][bc].status = 2;
             counter++;
-            if(ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height) {
-              ball.dy *= -1;
-              aud.src="#"; //brick break tone
-              musicStart();
-            }
-            else if(ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width) {
-              ball.dx *= -1;
-              aud.src="#"; //brick break tone
-              musicStart();
-            }
+          }
+          else if((ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width)&&ball.y>bricks[index][bc].y&&ball.y<bricks[index][bc].y+bricksClass.height) {
+            ball.dx *= -1;
+            bricks[index][bc].status = 2;
+            counter++;
+          }
+          else {
+            ball.dy *= -1;
+            bricks[index][bc].status = 2;
+            counter++;
+          }
         }
+        flag=0;
       }
     }
   }
-}
+  
