@@ -119,6 +119,7 @@ function myGreeting2() {
 
 function myGreeting1() {
   startShowDiv.style.display = "none";
+  startShowDiv.innerHTML = "READY!";
   gameBox.style.display="block"
   handler1();
 }
@@ -235,17 +236,46 @@ function gameLoop() {
 
 function gameEnd() {
   endPic.style.display = "block";
+<<<<<<< HEAD
 
   stopbtn.removeEventListener("click", stopAction);
   updateScreen();
 
 
+=======
+  stopbtn.removeEventListener("click", stopAction);
+  playButton.addEventListener("click", rematch);
+>>>>>>> ab95905edde0cb9f5013935dada124776f77f7ba
 }
 
 function rematch() {
   endPic.style.display = "none";
+<<<<<<< HEAD
   console.log("rematch");
 
+=======
+  lives = 3;
+  counter = 0;
+  for(let index = 0; index < 4; index++) {
+    for (let bc = 0; bc < 8-index; bc++) {
+      bricks[index][bc].status = 0;
+    }
+  }
+  slider.x = 372.5;
+  ball.x = canvas.width / 2;
+  ball.y = slider.y - 16;
+  ballMoveinit = false;
+  oldX = 0;
+  mouseFlag = 0;
+  rightArrow = false;
+  leftArrow = false;
+  playButton.textContent = "Play";
+  updateScreen();
+  drawGame();  
+  playButton.removeEventListener("click", rematch);
+  startShowDiv.style.display = "block";
+  myTimeout3();
+>>>>>>> ab95905edde0cb9f5013935dada124776f77f7ba
 }
 
 function drawGame() {
