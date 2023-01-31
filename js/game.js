@@ -236,24 +236,14 @@ function gameLoop() {
 
 function gameEnd() {
   endPic.style.display = "block";
-<<<<<<< HEAD
-
-  stopbtn.removeEventListener("click", stopAction);
-  updateScreen();
-
-
-=======
   stopbtn.removeEventListener("click", stopAction);
   playButton.addEventListener("click", rematch);
->>>>>>> ab95905edde0cb9f5013935dada124776f77f7ba
+  playButton.textContent = "Rematch";
+  updateScreen();
 }
 
 function rematch() {
   endPic.style.display = "none";
-<<<<<<< HEAD
-  console.log("rematch");
-
-=======
   lives = 3;
   counter = 0;
   for(let index = 0; index < 4; index++) {
@@ -275,7 +265,6 @@ function rematch() {
   playButton.removeEventListener("click", rematch);
   startShowDiv.style.display = "block";
   myTimeout3();
->>>>>>> ab95905edde0cb9f5013935dada124776f77f7ba
 }
 
 function drawGame() {
@@ -329,7 +318,7 @@ function updateScreen() {
   ballSliderCollision();
   ballWallCollision();
   ballBricksCollision();
-  showHighScore();
+  //showHighScore();
 }
 function showCounter() {
   viewScore.textContent = `Score : ${counter}`;
