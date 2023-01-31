@@ -213,14 +213,12 @@ function gameLoop() {
   updateScreen();
   if(lives == 0) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    removeEventListener("mousedown", handler0);
     endPic.src = "./resources/images/Game-Over-PNG-Free-Download.webp";
     gameEnd();
     return;
   }
   if (counter == 60) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    removeEventListener("mousedown", handler0);
     endPic.src = "./resources/images/winner1.png";
     gameEnd();
     return;
@@ -236,9 +234,12 @@ function gameLoop() {
 
 function gameEnd() {
   endPic.style.display = "block";
+  removeEventListener("mousedown", handler0);
+  removeEventListener("keydown", handler0);
   stopbtn.removeEventListener("click", stopAction);
   playButton.addEventListener("click", rematch);
   playButton.textContent = "Rematch";
+  space=false;
   updateScreen();
 }
 
@@ -246,7 +247,7 @@ function rematch() {
   endPic.style.display = "none";
   lives = 3;
   counter = 0;
-  for(let index = 0; index < 4; index++) {
+  for(let index = 0; index <5; index++) {
     for (let bc = 0; bc < 8-index; bc++) {
       bricks[index][bc].status = 0;
     }
@@ -264,6 +265,7 @@ function rematch() {
   drawGame();  
   playButton.removeEventListener("click", rematch);
   startShowDiv.style.display = "block";
+  space=false;
   myTimeout3();
 }
 
