@@ -26,7 +26,7 @@ let soundEffect =[
 ]
 let rightArrow = false;
 let leftArrow = false;
-const constant = 5;
+const constant = 12;
 let dX = 0 ,dY = 0;
 const startShowDiv = document.getElementById("startshow");
 //score counter
@@ -39,16 +39,16 @@ let slider = {
   height: 36,
   x: 372.5, // 372.5
   y: canvas.height * 0.94,
-  dx: 6
+  dx: 10
 };
 let ball = {
   r: 10,
   x: canvas.width / 2,
   y: slider.y - 16,
-  dx: 4, //10
-  dy: -4,//-10
-  originaldx: 4,
-  originaldy: -4,
+  dx: 7, //10
+  dy: -7,//-10
+  originaldx: 7,
+  originaldy: -7,
 };
 let ballMoveinit = false;
 let bricks = [];
@@ -219,8 +219,6 @@ function gameLoop() {
     gameEnd();
     return;
   }
-  drawGame();
-  updateScreen();
   if (mouseFlag == 1) {
     leftArrow = false;
     rightArrow = false;
