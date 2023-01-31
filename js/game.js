@@ -11,6 +11,11 @@ const viewLives = document.getElementById("Lives");
 const sliderBar = document.getElementById("sliderBar");
 const gameBox = document.getElementById("gameBox");
 const ctx = canvas.getContext("2d");
+
+
+
+
+
 let mute = 0;
 let lives = 3;
 let end = 0 ;
@@ -230,10 +235,17 @@ function gameLoop() {
 
 function gameEnd() {
   endPic.style.display = "block";
+
+  stopbtn.removeEventListener("click", stopAction);
+  updateScreen();
+
+
 }
 
 function rematch() {
   endPic.style.display = "none";
+  console.log("rematch");
+
 }
 
 function drawGame() {
@@ -287,6 +299,7 @@ function updateScreen() {
   ballSliderCollision();
   ballWallCollision();
   ballBricksCollision();
+  showHighScore();
 }
 function showCounter() {
   viewScore.textContent = `Score : ${counter}`;
