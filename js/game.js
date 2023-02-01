@@ -27,7 +27,7 @@ let soundEffect =[
 ]
 let rightArrow = false;
 let leftArrow = false;
-const constant = 12;
+const constant = 15;
 let dX = 0 ,dY = 0;
 const startShowDiv = document.getElementById("startshow");
 //score counter
@@ -46,10 +46,10 @@ let ball = {
   r: 10,
   x: canvas.width / 2,
   y: slider.y - 16,
-  dx: 7, //10
-  dy: -7,//-10
-  originaldx: 7,
-  originaldy: -7,
+  dx: 9, //10
+  dy: -9,//-10
+  originaldx: 9,
+  originaldy: -9,
 };
 let ballMoveinit = false;
 let bricks = [];
@@ -88,7 +88,7 @@ function myTimeout3 () {
   playButton.removeEventListener("click", myTimeout3);
   startShowDiv.innerHTML = "READY!";
   aud.src=`${soundEffect[1]}`; //start tone
-  musicStart(0);
+  musicStart(0.2);
   setTimeout(myGreeting3,1500);
 };
 
@@ -96,7 +96,7 @@ function myTimeout3 () {
 function myGreeting3() {
   startShowDiv.innerHTML = "STEADY!";
   aud.src=`${soundEffect[1]}`; //start tone
-  musicStart(0);
+  musicStart(0.2);
   const myTimeout2 = () => {
     setTimeout(myGreeting2,1500);
   };
@@ -106,7 +106,7 @@ function myGreeting3() {
 function myGreeting2() {
   startShowDiv.innerHTML = "GO...";
   aud.src=`${soundEffect[1]}`; //start tone
-  musicStart(0);
+  musicStart(0.2);
   const myTimeout1 = () => {
     setTimeout(myGreeting1,1500);
   };
@@ -127,24 +127,12 @@ function soundFun (){
   else{
     mute = 0;
     soundimg.src="./resources/images/sound.png"
-    if(aud.src == `${soundEffect[0]}`) {
-      musicStart(0.1);
-    }
   }
 }
 function musicStart(t) {
   if(mute == 0){
-    if(aud.src == `${soundEffect[0]}`) {
-      aud.loop = true;
-    }
-    else {
-      aud.loop = false;
-    }
-  aud.currentTime = t;
-  aud.play();
-  }
-  else {
-    aud.stop();
+    aud.currentTime = t;
+    aud.play();
   }
 }
 
@@ -367,7 +355,7 @@ function ballSliderCollision() {
     ball.x <= slider.x + slider.width
   ){
     aud.src=`${soundEffect[4]}`; //paddle hit tone
-    musicStart(0);
+    musicStart(0.1);
     let seta = calSeta();
     ball.dx = constant * Math.sin(seta);
     ball.dy = -constant * Math.cos(seta);
