@@ -1,6 +1,8 @@
+
 // variables && Objects
 const playButton = document.getElementById("play");
 const canvas = document.getElementById("cvs");
+const ctx = canvas.getContext("2d");
 const stopbtn = document.getElementById("stop");
 let devpause = document.getElementById("pause");
 const aud = document.getElementById("aud");
@@ -10,35 +12,33 @@ const viewScore = document.getElementById("Score");
 const viewLives = document.getElementById("Lives");
 const sliderBar = document.getElementById("sliderBar");
 const gameBox = document.getElementById("gameBox");
-const ctx = canvas.getContext("2d");
+const tokenImage = document.getElementById("life");
+const startShowDiv = document.getElementById("startshow");
+let img=[document.getElementById("bre"),document.getElementById("bre2"),document.getElementById("bre3"),document.getElementById("bre4")];
+let soundEffect =[
+  "./resources/sound/beep-beep-6151.mp3",
+  "./resources/sound/videogame-death-sound-43894.mp3",
+  "./resources/sound/success-fanfare-trumpets-6185.mp3",
+  "./resources/sound/mixkit-tech-break-fail-2947.wav",
+  "./resources/sound/mixkit-glass-break-with-hammer-thud-759.wav",
+  "./resources/sound/slider.wav",
+  "./resources/sound/token.wav",
+]
+const constant = 15;
+let bricksNumber=60;
 let mute = 0;
 let lives = 3;
 let end = 0 ;
 let space=false;
-let img=[document.getElementById("bre"),document.getElementById("bre2"),document.getElementById("bre3"),document.getElementById("bre4")]
-let soundEffect =[
-  "./resources/sound/gamemusic-6082.mp3",
-  "./resources/sound/beep-beep-6151.mp3", //bell chime
-  2, //placeholder for the go tone
-  "./resources/sound/videogame-death-sound-43894.mp3", //lose tone: 3
-  "./resources/sound/mixkit-tech-break-fail-2947.wav", 
-  "./resources/sound/success-fanfare-trumpets-6185.mp3", //win tone: 5
-  "./resources/sound/mixkit-glass-break-with-hammer-thud-759.wav" //
-]
+let scoreCounter = 0;
 let rightArrow = false;
 let leftArrow = false;
-const constant = 15;
-let dX = 0 ,dY = 0;
-const startShowDiv = document.getElementById("startshow");
-//score counter
-let counter = 0;
-
-// Ball object here
+let bricksShiftX = 0 ,bricksShiftY = 0;
 let oldX,mouseFlag = 0;
 let slider = {
-  width: 220 , //200
+  width:220 , 
   height: 36,
-  x: 372.5, // 372.5
+  x:372.5, 
   y: canvas.height * 0.94,
   dx: 10
 };
@@ -51,18 +51,29 @@ let ball = {
   originaldx: 9,
   originaldy: -9,
 };
+
 let ballMoveinit = false;
 let bricks = [];
-let bricksColors = ["rgba(248, 240, 240, 0.594)","rgba(162, 0, 76, 0.606)"];
+let token ={
+  Index:Math.floor(Math.random()*(bricksNumber/2+1)),
+  status:false,
+  active:false,
+  y:0,
+  x:0,
+  width:70,
+  height:70,
+  dy:3
+}
 
+let tokenCounter = 1;
 
 /////////////////////////////////////////////////////////////
-// Event Listener
+// Event Listener for start game
 soundimg.addEventListener("click",soundFun)
-//addEventListener("load", ()=>{musicStart(0)});
-playButton.addEventListener("click", myTimeout3);
+playButton.addEventListener("click", readyShow);
+
 ////////////////////////////////////////////////////////////////
-// Functions
+// Functions & classes
 
 class bricksClass{
   static width = 97;
@@ -76,48 +87,43 @@ class bricksClass{
 for(let index = 0; index < 5; index++) {
   bricks[index]=[];
   for (let bc = 0; bc < 8-index; bc++) {
-    bricks[index][bc]=new bricksClass(dX,dY);
-    dX+=bricksClass.width+21;
+    bricks[index][bc]=new bricksClass(bricksShiftX,bricksShiftY);
+    bricksShiftX+=bricksClass.width+21;
   }
-  dY+=bricksClass.height+50;
-  dX=((index+1)/2)*bricksClass.width;
+  bricksShiftY+=bricksClass.height+50;
+  bricksShiftX=((index+1)/2)*bricksClass.width;
 }
 
-function myTimeout3 () {
+function readyShow () {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  playButton.removeEventListener("click", myTimeout3);
+  playButton.removeEventListener("click", readyShow);
   startShowDiv.innerHTML = "READY!";
-  aud.src=`${soundEffect[1]}`; //start tone
+  aud.src=`${soundEffect[0]}`;
   musicStart(0.2);
-  setTimeout(myGreeting3,1500);
+  setTimeout(steadyShow,1500);
 };
 
 
-function myGreeting3() {
+function steadyShow() {
   startShowDiv.innerHTML = "STEADY!";
-  aud.src=`${soundEffect[1]}`; //start tone
+  aud.src=`${soundEffect[0]}`;
   musicStart(0.2);
-  const myTimeout2 = () => {
-    setTimeout(myGreeting2,1500);
-  };
-  myTimeout2();
+    setTimeout(goShow,1500);
 }
 
-function myGreeting2() {
+function goShow() {
   startShowDiv.innerHTML = "GO...";
-  aud.src=`${soundEffect[1]}`; //start tone
+  aud.src=`${soundEffect[0]}`;
   musicStart(0.2);
-  const myTimeout1 = () => {
-    setTimeout(myGreeting1,1500);
-  };
-  myTimeout1();
+  setTimeout(finishShow,1500);
+  
 }
 
-function myGreeting1() {
+function finishShow() {
   startShowDiv.style.display = "none";
   startShowDiv.innerHTML = "READY!";
   gameBox.style.display="block"
-  handler1();
+  entryPoint();
 }
 function soundFun (){
   if (mute == 0){
@@ -136,26 +142,25 @@ function musicStart(t) {
   }
 }
 
-function handler0 (event){
-  
+function ballGoo (event){
   if(event.keyCode == 32 || event.type == "mousedown"){
-    removeEventListener("keydown", handler0);
-    removeEventListener("mousedown", handler0);
-    stopbtn.addEventListener("mousedown",stopAction); 
+    removeEventListener("keydown", ballGoo);
+    canvas.removeEventListener("mousedown", ballGoo);
+    stopbtn.addEventListener("mousedown",pauseFun); 
     space=true;
   }
 }
 
-function handler1() {
-  addEventListener("keydown", handler2);
-  addEventListener("keyup", handler3);
-  addEventListener("keydown", handler0);
-  canvas.addEventListener("mousemove", handler4);
+function entryPoint() {
+  addEventListener("keydown", keyBoardListener);
+  addEventListener("keyup", reverseKeyBoardListener);
+  addEventListener("keydown", ballGoo);
+  canvas.addEventListener("mousemove", mouseListener);
   gameLoop();
   
 }
 
-function handler2(event) {
+function keyBoardListener(event) {
   if (event.keyCode == 37) {
     leftArrow = true;
     mouseFlag = 0;
@@ -165,8 +170,7 @@ function handler2(event) {
   }
 }
 
-function handler3(event) {
-  slider.dx = 10;
+function reverseKeyBoardListener(event) {
   if (event.keyCode == 37) {
     leftArrow = false;
   } else if (event.keyCode == 39) {
@@ -174,9 +178,9 @@ function handler3(event) {
   }
 }
 
-function handler4(event) {
+function mouseListener(event) {
   mouseFlag = 1;
-  addEventListener("mousedown",handler0)
+  canvas.addEventListener("mousedown",ballGoo);
   if(event.screenX+80 < canvas.width+80 && event.screenX-slider.width/2-45 > 50){
     slider.x=event.screenX-slider.width/2-100;
     if (!space){
@@ -185,20 +189,22 @@ function handler4(event) {
     }
   }
 }
-function stopAction(){
+function pauseFun(){
   if(ballMoveinit) {
     ballMoveinit=false;
     devpause.style.display='block';
-    removeEventListener("keydown", handler2);
-    removeEventListener("keyup", handler3);
+    removeEventListener("keydown", keyBoardListener);
+    removeEventListener("keyup", reverseKeyBoardListener);
+    canvas.removeEventListener("mousedown", ballGoo);
+    canvas.removeEventListener("keydown", ballGoo);
     stopbtn.textContent="Continue";
     space=false;
     }
   else{
     ballMoveinit=true;
     devpause.style.display='none';
-    addEventListener("keydown", handler2);
-    addEventListener("keyup", handler3); 
+    addEventListener("keydown", keyBoardListener);
+    addEventListener("keyup", reverseKeyBoardListener); 
     stopbtn.textContent="Pause";
     space=true;
   }
@@ -210,17 +216,18 @@ function gameLoop() {
   if(lives == 0) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     endPic.src = "./resources/images/Game-Over-PNG-Free-Download.webp";
-    aud.src=`${soundEffect[3]}`; //brick break tone
+    aud.src=`${soundEffect[1]}`;
     gameEnd();
     return;
   }
-  if (counter == 60) {
+  if (scoreCounter == bricksNumber ) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     endPic.src = "./resources/images/winner1.png";
-    aud.src=`${soundEffect[5]}`;
+    aud.src=`${soundEffect[2]}`;
     gameEnd();
     return;
   }
+  
   if (mouseFlag == 1) {
     leftArrow = false;
     rightArrow = false;
@@ -229,27 +236,25 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 
 }
-//musicStart(0.1); >>add to game end
+
 function gameEnd() {
   endPic.style.display = "block";
-  removeEventListener("mousedown", handler0);
-  removeEventListener("keydown", handler0);
-  stopbtn.removeEventListener("click", stopAction);
+  canvas.removeEventListener("mousemove", ballGoo);
+  removeEventListener("keydown", ballGoo);
+  removeEventListener("keydown", keyBoardListener);
+  removeEventListener("keyup", reverseKeyBoardListener);
+  canvas.removeEventListener("mousemove", mouseListener);
+  stopbtn.removeEventListener("mousedown", pauseFun);
   playButton.addEventListener("click", rematch);
   playButton.textContent = "Rematch";
   space=false;
-  updateScreen();
-  musicStart(0); //win or lose tone
-  setTimeout(() => {
-    aud.src=`${soundEffect[0]}`; //static sound
-    musicStart(0.1);
-  }, 3000);
+  musicStart(0);
 }
 
 function rematch() {
   endPic.style.display = "none";
   lives = 3;
-  counter = 0;
+  scoreCounter = 0;
   for(let index = 0; index <5; index++) {
     for (let bc = 0; bc < 8-index; bc++) {
       bricks[index][bc].status = 0;
@@ -263,13 +268,11 @@ function rematch() {
   mouseFlag = 0;
   rightArrow = false;
   leftArrow = false;
-  playButton.textContent = "Play";
-  updateScreen();
-  drawGame();  
+  playButton.textContent = "Play"; 
   playButton.removeEventListener("click", rematch);
   startShowDiv.style.display = "block";
   space=false;
-  myTimeout3();
+  readyShow();
 }
 
 function drawGame() {
@@ -294,7 +297,6 @@ function drawBall() {
 }
 
 function drawBricks() {
- 
   for(let i =0 ; i<5 ; i++){
     for (let bc = 0; bc < 8-i; bc++) {
       let check = (bc+i)%2 ?0:1;
@@ -316,17 +318,19 @@ function drawBricks() {
 }
 
 function updateScreen() {
-  showCounter();
-  showLives();
   moveSlider();
   moveBall();
   ballSliderCollision();
   ballWallCollision();
   ballBricksCollision();
-  //showHighScore();
+  if ( tokenCounter < 3){
+    tokenFun();
+  }
+  showCounter();
+  showLives();
 }
 function showCounter() {
-  viewScore.textContent = `Score : ${counter}`;
+  viewScore.textContent = `Score : ${scoreCounter}`;
 }
 function showLives() {
   viewLives.textContent = `Lives  : ${lives}`;
@@ -348,25 +352,6 @@ function moveSlider() {
   }
 }
 
-function ballSliderCollision() {
-  if (
-    ball.y + ball.r >= slider.y &&
-    ball.x >= slider.x &&
-    ball.x <= slider.x + slider.width
-  ){
-    aud.src=`${soundEffect[4]}`; //paddle hit tone
-    musicStart(0.1);
-    let seta = calSeta();
-    ball.dx = constant * Math.sin(seta);
-    ball.dy = -constant * Math.cos(seta);
-  }
-}
-
-function calSeta() {
-  let ratio = ((ball.x - (slider.x + slider.width / 2)) / (slider.width / 2)) * 1.1;
-  return ratio;
-}
-
 function moveBall() {
   if (!ballMoveinit) {
     if (space) {
@@ -380,6 +365,26 @@ function moveBall() {
   }
 }
 
+function ballSliderCollision() {
+  if (
+    ball.y + ball.r >= slider.y &&
+    ball.x >= slider.x &&
+    ball.x <= slider.x + slider.width
+  ){
+    aud.src=`${soundEffect[5]}`;
+    musicStart(0.9);
+    let seta = calculateSeta();
+    ball.dx = constant * Math.sin(seta);
+    ball.dy = -constant * Math.cos(seta);
+  }
+}
+
+function calculateSeta() {
+  let ratio = ((ball.x - (slider.x + slider.width / 2)) / (slider.width / 2)) * 1.1;
+  return ratio;
+}
+
+
 function ballWallCollision() {
   if (ball.y >= canvas.height - ball.r) {
     lives--;
@@ -388,20 +393,20 @@ function ballWallCollision() {
     ball.y = slider.y - 16;
     ball.dx = ball.originaldx;
     ball.dy = ball.originaldy;
-    addEventListener("keydown", handler0);
-    stopbtn.removeEventListener("mousedown",stopAction); 
+    addEventListener("keydown", ballGoo);
+    stopbtn.removeEventListener("mousedown",pauseFun); 
     space=false;
-    aud.src=`${soundEffect[4]}`; //lose live tone
-    musicStart(0.3);
+    aud.src=`${soundEffect[1]}`;
+    musicStart(1.6);
   } else {
     if (ball.x - ball.r <= 0 || ball.x >= canvas.width - ball.r) {
       ball.dx = ball.dx * -1;
-      aud.src=`${soundEffect[4]}`; //wall hit tone
+      aud.src=`${soundEffect[3]}`;
       musicStart(0.3);
     }
     if (ball.y -ball.r <= 0) {
       ball.dy = ball.dy * -1;
-      aud.src=`${soundEffect[4]}`; //wall hit tone
+      aud.src=`${soundEffect[3]}`;
       musicStart(0.3);
     }
   }
@@ -410,28 +415,31 @@ function ballBricksCollision() {
   for (let index = 0; index < 5; index++) {
     let flag =0;
     for (let bc = 0; bc < 8-index; bc++) {
+        if(token.Index == scoreCounter){
+          token.active = true;
+        }
         if( bricks[index][bc].status == 0 && ball.x+ball.r >= bricks[index][bc].x 
           && ball.x - ball.r <= bricks[index][bc].x + bricksClass.width
           && (ball.y+ball.r >= bricks[index][bc].y &&
           ball.y-ball.r <= bricks[index][bc].y + bricksClass.height )){
-            aud.src=`${soundEffect[6]}`; //brick hit tone
+            aud.src=`${soundEffect[4]}`;
             musicStart(0.5);
           
           if((ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height)&& ball.x>bricks[index][bc].x&&ball.x<bricks[index][bc].x+bricksClass.width){
             ball.dy *= -1;
             bricks[index][bc].status = 1;
-            counter++;
+            scoreCounter++;
           }
           
           else if((ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width)&&ball.y>bricks[index][bc].y&&ball.y<bricks[index][bc].y+bricksClass.height) {
             ball.dx *= -1;
             bricks[index][bc].status = 1;
-            counter++;
+            scoreCounter++;
           }
           else {
             ball.dy *= -1;
             bricks[index][bc].status = 1;
-            counter++;
+            scoreCounter++;
           }
           flag=1;
         }
@@ -439,27 +447,66 @@ function ballBricksCollision() {
           && ball.x - ball.r <= bricks[index][bc].x + bricksClass.width
           && (ball.y+ball.r >= bricks[index][bc].y &&
             ball.y-ball.r <= bricks[index][bc].y + bricksClass.height )){
-            aud.src=`${soundEffect[6]}`; //brick break tone
+            aud.src=`${soundEffect[4]}`;
             musicStart(0.5);
          
           if((ball.y <bricks[index][bc].y || ball.y > bricks[index][bc].y+bricksClass.height)&& ball.x>bricks[index][bc].x&&ball.x<bricks[index][bc].x+bricksClass.width) {
             ball.dy *= -1;
             bricks[index][bc].status = 2;
-            counter++;
+            scoreCounter++;
           }
           else if((ball.x <bricks[index][bc].x || ball.x > bricks[index][bc].x+bricksClass.width)&&ball.y>bricks[index][bc].y&&ball.y<bricks[index][bc].y+bricksClass.height) {
             ball.dx *= -1;
             bricks[index][bc].status = 2;
-            counter++;
+            scoreCounter++;
           }
           else {
             ball.dy *= -1;
+            ball.dx *= -1;
             bricks[index][bc].status = 2;
-            counter++;
+            scoreCounter++;
+          }
+          if ( token.active == true ){
+            token.active = false;
+            token.status=true;
+            token.x=bricks[index][bc].x+(bricksClass.width-token.width)/2;
+            token.y=bricks[index][bc].y;
+            console.log("b.x",bricks[index][bc].x,"b.y",bricks[index][bc].y)
+            console.log("t.x",token.x,"t.y",token.y)
           }
         }
         flag=0;
       }
     }
   }
-  
+///////////////////////////////////////////////////////
+// bounce 
+function tokenFun(){
+  if( token.status == true){
+    ctx.drawImage(tokenImage,token.x,token.y,token.width,token.height);
+    token.y += token.dy;
+    if(token.y+token.height >= slider.y &&
+       token.y < slider.y+slider.height &&
+       token.x+token.width >= slider.x +2 && 
+       token.x <= slider.x+slider.width-2
+       )
+       {
+        aud.src=`${soundEffect[6]}`;
+        musicStart(0);
+        tokenCounter ++;
+        token.Index=Math.floor(Math.random()*(bricksNumber - scoreCounter +1 ))+scoreCounter;
+        token.active == false;
+        token.status=false;
+        lives++;
+        console.log(token.Index)
+       }
+       else if (token.y > canvas.height)
+       {
+        tokenCounter ++;
+        token.Index=Math.floor(Math.random()*(bricksNumber - scoreCounter +1 ))+scoreCounter;
+        console.log(token.Index)
+        token.active == false;
+        token.status=false;
+      }
+    }
+}
