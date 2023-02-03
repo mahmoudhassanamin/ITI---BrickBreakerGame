@@ -95,7 +95,7 @@ p{
   height: 30vw;
   display: none;
 }
-#Lives {
+/* #Lives {
   display:inline-block;
   margin: 0;
   position: absolute;
@@ -116,22 +116,44 @@ p{
   color: white;
   font-weight: bolder;
   padding: 0;
-}
+} */
 .life{
   display:inline-block;
-  position: absolute;
+  vertical-align: middle;
+  /* position: absolute;
   top:0.2vw;
-  left: 1.6vw;
-  width: 6vw;
-  height: 5vw;
+  left: 1.6vw; */
+  height: 2rem;
+  width: auto;
 }
 .gameBox{
   position:absolute;
   top: 19vw;
   left: 72vw;
-  width: 25vw;
-  height: 20vw;
+  /* width: 25vw;
+  height: 20vw; */
   display: none;
+  text-align: center;
+  background-color:black;
+  opacity: 0.6;
+  height: fit-content;
+  border: 2px solid rgb(250, 2, 200);
+  border-radius: 1vw;
+  font-weight: bolder;
+  width: 21vw;
+  padding:5px;
+}
+.dashboard{
+  display:inline-block;
+  vertical-align: middle;
+  margin: 0;
+  /* position: absolute;
+  top: 1.5vw;
+  left: 6vw; */
+  font-size: 200%;
+  color: white;
+  font-weight: bolder;
+  padding: 2px;
 }
 #soundimg{
   display:inline-block;
